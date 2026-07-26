@@ -20,6 +20,12 @@ const github = contactLinks.get("github");
 const linkedin = contactLinks.get("linkedin");
 const resume = contactLinks.get("resume");
 
+const emailAddress = (email?.href ?? "mailto:sree.manas@example.com").replace(
+  /^mailto:/,
+  "",
+);
+const gmailComposeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(emailAddress)}`;
+
 const navigationCommands: readonly CommandDefinition[] = [
   {
     id: "nav-home",
@@ -308,8 +314,8 @@ const actionCommands: readonly CommandDefinition[] = [
     description: "Compose a new email",
     category: "action",
     action: {
-      type: "mailto",
-      href: email?.href ?? "mailto:sree.manas@example.com",
+      type: "open",
+      href: gmailComposeUrl,
     },
     keywords: ["mail", "email", "contact", "hire", "send mail"],
     aliases: ["mail", "email", "contact", "hire", "send mail"],
@@ -323,10 +329,7 @@ const actionCommands: readonly CommandDefinition[] = [
     category: "action",
     action: {
       type: "copy",
-      value: (email?.href ?? "mailto:sree.manas@example.com").replace(
-        /^mailto:/,
-        "",
-      ),
+      value: emailAddress,
       successMessage: "Email copied.",
     },
     keywords: ["copy email", "email copy", "mail"],

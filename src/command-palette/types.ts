@@ -23,10 +23,6 @@ export type CommandAction =
       filename?: string;
     }
   | {
-      type: "mailto";
-      href: string;
-    }
-  | {
       type: "copy";
       value: string;
       successMessage: string;

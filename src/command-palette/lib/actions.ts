@@ -14,8 +14,17 @@ function scrollToSection(targetId: string): void {
   target.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-function openInNewTab(href: string): void {
-  window.open(href, "_blank", "noopener,noreferrer");
+function openInNewTab(href: string): boolean {
+  const link = document.createElement("a");
+  link.href = href;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+
+  document.body.append(link);
+  link.click();
+  link.remove();
+
+  return true;
 }
 
 function downloadFile(href: string, filename?: string): void {
@@ -25,16 +34,6 @@ function downloadFile(href: string, filename?: string): void {
   if (filename) {
     link.download = filename;
   }
-
-  document.body.append(link);
-  link.click();
-  link.remove();
-}
-
-function openMailClient(href: string): void {
-  const link = document.createElement("a");
-  link.href = href.startsWith("mailto:") ? href : `mailto:${href}`;
-  link.rel = "noopener noreferrer";
 
   document.body.append(link);
   link.click();
@@ -76,17 +75,11 @@ export async function executeCommandAction(
   }
 
   if (action.type === "open") {
-    openInNewTab(action.href);
-    return true;
+    return openInNewTab(action.href);
   }
 
   if (action.type === "download") {
     downloadFile(action.href, action.filename);
-    return true;
-  }
-
-  if (action.type === "mailto") {
-    openMailClient(action.href);
     return true;
   }
 
