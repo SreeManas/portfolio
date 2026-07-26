@@ -7,8 +7,14 @@ import type {
   CommandSearchResult,
 } from "@/command-palette/types";
 import { executeCommandAction } from "@/command-palette/lib/actions";
-import { getVisitorPlatform, formatPlatformShortcut } from "@/command-palette/lib/platform";
-import { createSuggestionResult, searchCommands } from "@/command-palette/lib/search";
+import {
+  formatPlatformShortcut,
+  getVisitorPlatform,
+} from "@/command-palette/lib/platform";
+import {
+  createSuggestionResult,
+  searchCommands,
+} from "@/command-palette/lib/search";
 
 interface UseCommandPaletteResult {
   isOpen: boolean;
@@ -177,22 +183,26 @@ export function useCommandPalette(
         return;
       }
 
-      void executeCommandAction(command.action, { onSuccess: showToast }).then(
-        (didExecute) => {
-          if (didExecute) {
-            setUsageCounts((currentUsageCounts) => {
-              const nextUsageCounts = new Map(currentUsageCounts);
-              nextUsageCounts.set(
-                command.id,
-                (nextUsageCounts.get(command.id) ?? 0) + 1,
-              );
-              writeUsageCounts(nextUsageCounts);
-              return nextUsageCounts;
-            });
-            closePalette();
+      void executeCommandAction(command.action, { onSuccess: showToast })
+        .then((didExecute) => {
+          if (!didExecute) {
+            return;
           }
-        },
-      );
+
+          setUsageCounts((currentUsageCounts) => {
+            const nextUsageCounts = new Map(currentUsageCounts);
+            nextUsageCounts.set(
+              command.id,
+              (nextUsageCounts.get(command.id) ?? 0) + 1,
+            );
+            writeUsageCounts(nextUsageCounts);
+            return nextUsageCounts;
+          });
+          closePalette();
+        })
+        .catch((error: unknown) => {
+          console.error("Command execution failed", error);
+        });
     },
     [closePalette, showToast],
   );

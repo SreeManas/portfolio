@@ -31,6 +31,16 @@ function downloadFile(href: string, filename?: string): void {
   link.remove();
 }
 
+function openMailClient(href: string): void {
+  const link = document.createElement("a");
+  link.href = href.startsWith("mailto:") ? href : `mailto:${href}`;
+  link.rel = "noopener noreferrer";
+
+  document.body.append(link);
+  link.click();
+  link.remove();
+}
+
 function getAbsoluteUrl(href: string): string {
   return new URL(href, window.location.origin).toString();
 }
@@ -76,7 +86,7 @@ export async function executeCommandAction(
   }
 
   if (action.type === "mailto") {
-    window.location.href = action.href;
+    openMailClient(action.href);
     return true;
   }
 
