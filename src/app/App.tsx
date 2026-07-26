@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 
+import { CommandPalette } from "@/command-palette/CommandPalette";
 import { Footer } from "@/components/layout/Footer";
 import { footerContent } from "@/content/footer";
 import { RootLayout } from "@/app/RootLayout";
@@ -36,6 +37,7 @@ export function App(): ReactElement {
         <Contact />
       </main>
       <Footer content={footerContent} />
+      <CommandPalette />
     </RootLayout>
   );
 }

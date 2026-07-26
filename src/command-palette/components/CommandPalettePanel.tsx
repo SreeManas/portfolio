@@ -1,0 +1,137 @@
+import type { ChangeEvent, ReactElement, RefObject } from "react";
+import { motion } from "framer-motion";
+
+import { CommandGroup } from "@/command-palette/components/CommandGroup";
+import { SearchGlyph } from "@/command-palette/components/SearchGlyph";
+import type { CommandGroupView } from "@/command-palette/lib/grouping";
+import type {
+  CommandDefinition,
+  CommandPaletteContent,
+} from "@/command-palette/types";
+import { Kbd } from "@/components/ui/Kbd";
+import { VisuallyHidden } from "@/components/ui/VisuallyHidden";
+
+interface CommandPalettePanelProps {
+  content: CommandPaletteContent;
+  groups: readonly CommandGroupView[];
+  query: string;
+  shortcutHint: string;
+  selectedCommandId: string | undefined;
+  inputRef: RefObject<HTMLInputElement | null>;
+  onQueryChange: (query: string) => void;
+  onClose: () => void;
+  onExecute: (command: CommandDefinition) => void;
+  onHover: (index: number) => void;
+  getCommandIndex: (command: CommandDefinition) => number;
+}
+
+const panelTransition = {
+  duration: 0.16,
+  ease: [0.16, 1, 0.3, 1],
+} as const;
+
+export function CommandPalettePanel({
+  content,
+  groups,
+  query,
+  shortcutHint,
+  selectedCommandId,
+  inputRef,
+  onQueryChange,
+  onClose,
+  onExecute,
+  onHover,
+  getCommandIndex,
+}: CommandPalettePanelProps): ReactElement {
+  const hasResults = groups.length > 0;
+
+  function handleQueryChange(event: ChangeEvent<HTMLInputElement>): void {
+    onQueryChange(event.target.value);
+  }
+
+  return (
+    <motion.div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="command-palette-title"
+      className="relative w-full max-w-[44rem] overflow-hidden rounded-[0.75rem] border border-border bg-paper shadow-[0_1.5rem_5rem_rgb(24_22_17_/_0.28)]"
+      initial={{ opacity: 0, scale: 0.985 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.985 }}
+      transition={panelTransition}
+      onMouseDown={(event) => {
+        event.stopPropagation();
+      }}
+    >
+      <VisuallyHidden id="command-palette-title">
+        {content.title}
+      </VisuallyHidden>
+
+      <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3 border-b border-border px-4 py-3">
+        <SearchGlyph />
+        <input
+          ref={inputRef}
+          type="search"
+          value={query}
+          onChange={handleQueryChange}
+          aria-label={content.inputLabel}
+          aria-controls="command-palette-results"
+          aria-activedescendant={
+            selectedCommandId ? `command-option-${selectedCommandId}` : undefined
+          }
+          placeholder={content.placeholder}
+          className="min-w-0 bg-transparent text-base leading-7 text-ink outline-none placeholder:text-muted-foreground"
+        />
+        <Kbd>{shortcutHint}</Kbd>
+      </div>
+
+      <div
+        id="command-palette-results"
+        role="listbox"
+        aria-label={query.trim() ? content.resultsLabel : content.emptyLabel}
+        className="max-h-[min(28rem,calc(100dvh-11rem))] overflow-y-auto px-2 pb-3"
+      >
+        {hasResults ? (
+          groups.map((group, groupIndex) => (
+            <motion.div
+              key={group.id}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.14,
+                delay: groupIndex * 0.018,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+            >
+              <CommandGroup
+                group={group}
+                categories={content.categories}
+                selectedCommandId={selectedCommandId}
+                getCommandIndex={getCommandIndex}
+                onExecute={onExecute}
+                onHover={onHover}
+              />
+            </motion.div>
+          ))
+        ) : (
+          <div className="px-3 py-10">
+            <p className="text-sm font-medium leading-6 text-ink">
+              {content.noResultsTitle}
+            </p>
+            <p className="mt-1 text-sm leading-6 text-muted-foreground">
+              {content.noResultsDescription}
+            </p>
+          </div>
+        )}
+      </div>
+
+      <button
+        type="button"
+        onClick={onClose}
+        className="sr-only"
+      >
+        Close
+      </button>
+    </motion.div>
+  );
+}
