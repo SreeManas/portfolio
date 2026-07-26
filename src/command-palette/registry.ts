@@ -396,6 +396,51 @@ const actionCommands: readonly CommandDefinition[] = [
     indicator: "⧉",
     priority: 72,
   },
+  {
+    id: "action-clear-recent",
+    title: "Clear Recent",
+    description: "Remove recent command history",
+    category: "action",
+    action: {
+      type: "clear-recent",
+      successMessage: "Recent commands cleared.",
+    },
+    keywords: ["clear recent", "recent history", "remove recent"],
+    aliases: ["clear recent", "recent history"],
+    indicator: "↺",
+    priority: 50,
+    personalizable: false,
+  },
+  {
+    id: "action-clear-most-used",
+    title: "Clear Most Used",
+    description: "Remove command usage counts",
+    category: "action",
+    action: {
+      type: "clear-most-used",
+      successMessage: "Most used commands cleared.",
+    },
+    keywords: ["clear most used", "clear usage", "usage history"],
+    aliases: ["clear usage", "clear most used", "most used"],
+    indicator: "↺",
+    priority: 50,
+    personalizable: false,
+  },
+  {
+    id: "action-reset-command-palette",
+    title: "Reset Command Palette",
+    description: "Clear pinned, recent, and usage history",
+    category: "action",
+    action: {
+      type: "reset-personalization",
+      successMessage: "Command palette reset.",
+    },
+    keywords: ["reset command palette", "clear all", "reset history"],
+    aliases: ["reset palette", "reset command palette", "clear all"],
+    indicator: "↺",
+    priority: 52,
+    personalizable: false,
+  },
 ];
 
 const externalCommands: readonly CommandDefinition[] = [

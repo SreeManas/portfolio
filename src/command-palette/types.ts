@@ -37,6 +37,18 @@ export type CommandAction =
       successMessage: string;
     }
   | {
+      type: "clear-recent";
+      successMessage: string;
+    }
+  | {
+      type: "clear-most-used";
+      successMessage: string;
+    }
+  | {
+      type: "reset-personalization";
+      successMessage: string;
+    }
+  | {
       type: "disabled";
     };
 
@@ -66,6 +78,7 @@ export interface CommandDefinition {
   shortcut?: string;
   disabled?: boolean;
   disabledReason?: string;
+  personalizable?: boolean;
 }
 
 export interface CommandCategoryDefinition {
@@ -96,6 +109,18 @@ export interface CommandPaletteContent {
   noResultsSuggestionCommandIds: readonly CommandDefinition["id"][];
   mobileTriggerLabel: string;
   firstVisitHintTemplate: string;
+  personalization: {
+    pinnedLabel: string;
+    pinnedEmptyLabel: string;
+    recentLabel: string;
+    recentEmptyLabel: string;
+    mostUsedLabel: string;
+    mostUsedEmptyLabel: string;
+    onboardingLabel: string;
+    favoriteLabel: string;
+    unfavoriteLabel: string;
+    favoriteLimitMessage: string;
+  };
   footerShortcuts: readonly {
     id: string;
     keys: string;
@@ -110,6 +135,7 @@ export interface CommandSearchResult {
   score: number;
   matchField: SearchableField | "content" | "suggestion";
   highlights: CommandHighlights;
+  meta?: string;
 }
 
 export interface CommandRegistry {

@@ -8,6 +8,10 @@ import type {
 } from "@/command-palette/types";
 import { executeCommandAction } from "@/command-palette/lib/actions";
 import {
+  getPersonalizedCommandGroups,
+  type CommandGroupView,
+} from "@/command-palette/lib/grouping";
+import {
   formatPlatformShortcut,
   getVisitorPlatform,
 } from "@/command-palette/lib/platform";
@@ -15,6 +19,19 @@ import {
   createSuggestionResult,
   searchCommands,
 } from "@/command-palette/lib/search";
+import {
+  clearFavoriteCommands,
+  clearRecentCommands,
+  clearUsageCounts,
+  favoritesStorageKey,
+  maxFavoriteCommands,
+  maxRecentCommands,
+  readCommandIds,
+  readUsageCounts,
+  recentStorageKey,
+  writeCommandIds,
+  writeUsageCounts,
+} from "@/command-palette/lib/personalization";
 
 interface UseCommandPaletteResult {
   isOpen: boolean;
@@ -23,46 +40,20 @@ interface UseCommandPaletteResult {
   query: string;
   setQuery: (query: string) => void;
   visibleResults: readonly CommandSearchResult[];
+  personalizedGroups: readonly CommandGroupView[];
   hasSearchMatches: boolean;
   selectedCommandId: string | undefined;
   selectedIndex: number;
   executeCommand: (command: CommandDefinition) => void;
+  toggleFavorite: (command: CommandDefinition) => void;
+  favoriteCommandIds: readonly CommandDefinition["id"][];
   setSelectedIndex: (index: number) => void;
   shortcutHint: string;
   showFirstVisitHint: boolean;
   toastMessage: string | undefined;
 }
 
-const usageStorageKey = "portfolio.commandPalette.usage.v1";
 const openedStorageKey = "portfolio.commandPalette.opened.v1";
-
-function readUsageCounts(): Map<CommandDefinition["id"], number> {
-  try {
-    const storedValue = window.localStorage.getItem(usageStorageKey);
-
-    if (!storedValue) {
-      return new Map();
-    }
-
-    const parsedValue = JSON.parse(storedValue) as Record<string, number>;
-    return new Map(Object.entries(parsedValue));
-  } catch {
-    return new Map();
-  }
-}
-
-function writeUsageCounts(
-  usageCounts: ReadonlyMap<CommandDefinition["id"], number>,
-): void {
-  try {
-    window.localStorage.setItem(
-      usageStorageKey,
-      JSON.stringify(Object.fromEntries(usageCounts)),
-    );
-  } catch {
-    // Local storage may be unavailable in restricted browser modes.
-  }
-}
 
 function hasOpenedBefore(): boolean {
   try {
@@ -78,18 +69,6 @@ function rememberOpened(): void {
   } catch {
     // Local storage may be unavailable in restricted browser modes.
   }
-}
-
-function getSuggestionResults(
-  content: CommandPaletteContent,
-  registry: CommandRegistry,
-): readonly CommandSearchResult[] {
-  return content.suggestionGroups.flatMap((group) =>
-    group.commandIds.flatMap((commandId) => {
-      const command = registry.commandById.get(commandId);
-      return command ? [createSuggestionResult(command)] : [];
-    }),
-  );
 }
 
 function getNoResultSuggestionResults(
@@ -111,7 +90,15 @@ export function useCommandPalette(
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [platform] = useState(() => getVisitorPlatform());
   const [hasOpened, setHasOpened] = useState(() => hasOpenedBefore());
-  const [usageCounts, setUsageCounts] = useState(() => readUsageCounts());
+  const [usageCounts, setUsageCounts] = useState(() =>
+    readUsageCounts(registry),
+  );
+  const [recentCommandIds, setRecentCommandIds] = useState(() =>
+    readCommandIds(recentStorageKey, registry),
+  );
+  const [favoriteCommandIds, setFavoriteCommandIds] = useState(() =>
+    readCommandIds(favoritesStorageKey, registry).slice(0, maxFavoriteCommands),
+  );
   const [toastMessage, setToastMessage] = useState<string>();
   const toastTimeoutRef = useRef<number | undefined>(undefined);
 
@@ -126,13 +113,28 @@ export function useCommandPalette(
     [content.shortcutHint.default, content.shortcutHint.mac, platform],
   );
 
+  const personalizedGroups = useMemo(
+    () =>
+      getPersonalizedCommandGroups(content, registry, {
+        favoriteCommandIds,
+        recentCommandIds,
+        usageCounts,
+      }),
+    [content, favoriteCommandIds, recentCommandIds, registry, usageCounts],
+  );
+
   const searchResults = useMemo(() => {
     if (!query.trim()) {
-      return getSuggestionResults(content, registry);
+      return personalizedGroups.flatMap((group) => group.results);
     }
 
-    return searchCommands(registry.commands, query, usageCounts);
-  }, [content, query, registry, usageCounts]);
+    return searchCommands(
+      registry.commands,
+      query,
+      usageCounts,
+      recentCommandIds,
+    );
+  }, [personalizedGroups, query, recentCommandIds, registry, usageCounts]);
   const hasSearchMatches = !query.trim() || searchResults.length > 0;
   const visibleResults = hasSearchMatches
     ? searchResults
@@ -177,9 +179,103 @@ export function useCommandPalette(
     setSelectedIndex(0);
   }, []);
 
+  const trackCommandExecution = useCallback((command: CommandDefinition) => {
+    if (command.personalizable === false) {
+      return;
+    }
+
+    setRecentCommandIds((currentRecentCommandIds) => {
+      const nextRecentCommandIds = [
+        command.id,
+        ...currentRecentCommandIds.filter((commandId) => commandId !== command.id),
+      ].slice(0, maxRecentCommands);
+      writeCommandIds(recentStorageKey, nextRecentCommandIds);
+      return nextRecentCommandIds;
+    });
+
+    setUsageCounts((currentUsageCounts) => {
+      const nextUsageCounts = new Map(currentUsageCounts);
+      nextUsageCounts.set(
+        command.id,
+        (nextUsageCounts.get(command.id) ?? 0) + 1,
+      );
+      writeUsageCounts(nextUsageCounts);
+      return nextUsageCounts;
+    });
+  }, []);
+
+  const toggleFavorite = useCallback(
+    (command: CommandDefinition) => {
+      if (command.disabled || command.personalizable === false) {
+        return;
+      }
+
+      setFavoriteCommandIds((currentFavoriteCommandIds) => {
+        const isFavorite = currentFavoriteCommandIds.includes(command.id);
+
+        if (isFavorite) {
+          const nextFavoriteCommandIds = currentFavoriteCommandIds.filter(
+            (commandId) => commandId !== command.id,
+          );
+          writeCommandIds(favoritesStorageKey, nextFavoriteCommandIds);
+          return nextFavoriteCommandIds;
+        }
+
+        if (currentFavoriteCommandIds.length >= maxFavoriteCommands) {
+          showToast(content.personalization.favoriteLimitMessage);
+          return currentFavoriteCommandIds;
+        }
+
+        const nextFavoriteCommandIds = [command.id, ...currentFavoriteCommandIds];
+        writeCommandIds(favoritesStorageKey, nextFavoriteCommandIds);
+        return nextFavoriteCommandIds;
+      });
+    },
+    [content.personalization.favoriteLimitMessage, showToast],
+  );
+
+  const executePersonalizationCommand = useCallback(
+    (command: CommandDefinition): boolean => {
+      if (command.action.type === "clear-recent") {
+        clearRecentCommands();
+        setRecentCommandIds([]);
+        showToast(command.action.successMessage);
+        closePalette();
+        return true;
+      }
+
+      if (command.action.type === "clear-most-used") {
+        clearUsageCounts();
+        setUsageCounts(new Map());
+        showToast(command.action.successMessage);
+        closePalette();
+        return true;
+      }
+
+      if (command.action.type === "reset-personalization") {
+        clearRecentCommands();
+        clearFavoriteCommands();
+        clearUsageCounts();
+        setRecentCommandIds([]);
+        setFavoriteCommandIds([]);
+        setUsageCounts(new Map());
+        showToast(command.action.successMessage);
+        closePalette();
+        return true;
+      }
+
+      return false;
+    },
+    [closePalette, showToast],
+  );
+
   const executeCommand = useCallback(
     (command: CommandDefinition) => {
       if (command.disabled) {
+        return;
+      }
+
+      if (executePersonalizationCommand(command)) {
         return;
       }
 
@@ -189,22 +285,14 @@ export function useCommandPalette(
             return;
           }
 
-          setUsageCounts((currentUsageCounts) => {
-            const nextUsageCounts = new Map(currentUsageCounts);
-            nextUsageCounts.set(
-              command.id,
-              (nextUsageCounts.get(command.id) ?? 0) + 1,
-            );
-            writeUsageCounts(nextUsageCounts);
-            return nextUsageCounts;
-          });
+          trackCommandExecution(command);
           closePalette();
         })
         .catch((error: unknown) => {
           console.error("Command execution failed", error);
         });
     },
-    [closePalette, showToast],
+    [closePalette, executePersonalizationCommand, showToast, trackCommandExecution],
   );
 
   useEffect(() => {
@@ -310,10 +398,13 @@ export function useCommandPalette(
     query,
     setQuery: updateQuery,
     visibleResults,
+    personalizedGroups,
     hasSearchMatches,
     selectedCommandId: selectedCommand?.id,
     selectedIndex: safeSelectedIndex,
     executeCommand,
+    toggleFavorite,
+    favoriteCommandIds,
     setSelectedIndex,
     shortcutHint,
     showFirstVisitHint: !hasOpened && !isOpen,

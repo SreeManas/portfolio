@@ -25,6 +25,8 @@ interface CommandPalettePanelProps {
   onQueryChange: (query: string) => void;
   onClose: () => void;
   onExecute: (command: CommandDefinition) => void;
+  onToggleFavorite: (command: CommandDefinition) => void;
+  favoriteCommandIds: readonly CommandDefinition["id"][];
   onHover: (index: number) => void;
   getCommandIndex: (command: CommandDefinition) => number;
 }
@@ -45,6 +47,8 @@ export function CommandPalettePanel({
   onQueryChange,
   onClose,
   onExecute,
+  onToggleFavorite,
+  favoriteCommandIds,
   onHover,
   getCommandIndex,
 }: CommandPalettePanelProps): ReactElement {
@@ -116,9 +120,13 @@ export function CommandPalettePanel({
                 group={group}
                 isSearching={isSearching}
                 selectedCommandId={selectedCommandId}
+                favoriteCommandIds={favoriteCommandIds}
                 getCommandIndex={getCommandIndex}
                 onExecute={onExecute}
+                onToggleFavorite={onToggleFavorite}
                 onHover={onHover}
+                favoriteLabel={content.personalization.favoriteLabel}
+                unfavoriteLabel={content.personalization.unfavoriteLabel}
               />
             </motion.div>
           ))
@@ -145,8 +153,13 @@ export function CommandPalettePanel({
                       result={result}
                       isSearching={false}
                       isSelected={selectedCommandId === result.command.id}
+                      isFavorite={favoriteCommandIds.includes(result.command.id)}
+                      canFavorite={result.command.personalizable !== false}
                       onSelect={() => onExecute(result.command)}
+                      onToggleFavorite={() => onToggleFavorite(result.command)}
                       onHover={() => onHover(getCommandIndex(result.command))}
+                      favoriteLabel={content.personalization.favoriteLabel}
+                      unfavoriteLabel={content.personalization.unfavoriteLabel}
                     />
                   ))}
                 </ul>

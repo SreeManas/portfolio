@@ -23,6 +23,18 @@ export const commandPaletteContent = {
   ],
   mobileTriggerLabel: "Command",
   firstVisitHintTemplate: "Press {shortcut} to explore the portfolio",
+  personalization: {
+    pinnedLabel: "Pinned",
+    pinnedEmptyLabel: "No pinned commands yet.",
+    recentLabel: "Recent",
+    recentEmptyLabel: "No recent commands yet.",
+    mostUsedLabel: "Most Used",
+    mostUsedEmptyLabel: "No usage history yet.",
+    onboardingLabel: "Suggestions",
+    favoriteLabel: "Pin command",
+    unfavoriteLabel: "Unpin command",
+    favoriteLimitMessage: "You can pin up to 5 commands.",
+  },
   footerShortcuts: [
     { id: "navigate", keys: "↑↓", label: "Navigate" },
     { id: "open", keys: "↵", label: "Open" },

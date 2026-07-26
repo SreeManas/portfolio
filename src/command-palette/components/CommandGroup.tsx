@@ -8,18 +8,26 @@ interface CommandGroupProps {
   group: CommandGroupView;
   isSearching: boolean;
   selectedCommandId: string | undefined;
+  favoriteCommandIds: readonly CommandDefinition["id"][];
   getCommandIndex: (command: CommandDefinition) => number;
   onExecute: (command: CommandDefinition) => void;
+  onToggleFavorite: (command: CommandDefinition) => void;
   onHover: (index: number) => void;
+  favoriteLabel: string;
+  unfavoriteLabel: string;
 }
 
 export function CommandGroup({
   group,
   isSearching,
   selectedCommandId,
+  favoriteCommandIds,
   getCommandIndex,
   onExecute,
+  onToggleFavorite,
   onHover,
+  favoriteLabel,
+  unfavoriteLabel,
 }: CommandGroupProps): ReactElement {
   return (
     <section aria-labelledby={`command-group-${group.id}`}>
@@ -32,7 +40,8 @@ export function CommandGroup({
         </h3>
         <div aria-hidden="true" className="h-px flex-1 bg-border" />
       </div>
-      <ul className="space-y-1">
+      {group.results.length > 0 ? (
+        <ul className="space-y-1">
         {group.results.map((result: CommandSearchResult) => {
           const { command } = result;
           const commandIndex = getCommandIndex(command);
@@ -43,12 +52,22 @@ export function CommandGroup({
               result={result}
               isSearching={isSearching}
               isSelected={selectedCommandId === command.id}
+              isFavorite={favoriteCommandIds.includes(command.id)}
+              canFavorite={command.personalizable !== false}
               onSelect={() => onExecute(command)}
+              onToggleFavorite={() => onToggleFavorite(command)}
               onHover={() => onHover(commandIndex)}
+              favoriteLabel={favoriteLabel}
+              unfavoriteLabel={unfavoriteLabel}
             />
           );
         })}
-      </ul>
+        </ul>
+      ) : (
+        <p className="px-3 pb-3 text-sm leading-6 text-muted-foreground">
+          {group.emptyLabel}
+        </p>
+      )}
     </section>
   );
 }

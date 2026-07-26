@@ -95,7 +95,11 @@ export async function executeCommandAction(
     return true;
   }
 
-  await copyToClipboard(action.value);
-  options.onSuccess(action.successMessage);
-  return true;
+  if (action.type === "copy") {
+    await copyToClipboard(action.value);
+    options.onSuccess(action.successMessage);
+    return true;
+  }
+
+  return false;
 }

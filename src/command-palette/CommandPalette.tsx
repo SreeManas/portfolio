@@ -27,9 +27,12 @@ export function CommandPalette(): ReactElement {
     query,
     setQuery,
     visibleResults,
+    personalizedGroups,
     hasSearchMatches,
     selectedCommandId,
     executeCommand,
+    toggleFavorite,
+    favoriteCommandIds,
     setSelectedIndex,
     shortcutHint,
     showFirstVisitHint,
@@ -38,7 +41,9 @@ export function CommandPalette(): ReactElement {
 
   const groups = useMemo(
     () =>
-      hasSearchMatches
+      !query.trim()
+        ? personalizedGroups
+        : hasSearchMatches
         ? groupCommandResults(
             commandPaletteContent,
             commandRegistry,
@@ -46,7 +51,7 @@ export function CommandPalette(): ReactElement {
             visibleResults,
           )
         : [],
-    [hasSearchMatches, query, visibleResults],
+    [hasSearchMatches, personalizedGroups, query, visibleResults],
   );
 
   const noResultSuggestions = useMemo(
@@ -110,6 +115,8 @@ export function CommandPalette(): ReactElement {
               onQueryChange={setQuery}
               onClose={closePalette}
               onExecute={executeCommand}
+              onToggleFavorite={toggleFavorite}
+              favoriteCommandIds={favoriteCommandIds}
               onHover={setSelectedIndex}
               getCommandIndex={getCommandIndex}
             />

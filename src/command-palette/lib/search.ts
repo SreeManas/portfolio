@@ -77,17 +77,17 @@ function scoreCandidate(
   const fieldWeight = field === "title" ? 1 : field === "alias" ? 0.94 : 0.72;
 
   if (normalizedCandidate === normalizedQuery) {
-    return 1000 * fieldWeight;
+    return field === "alias" ? 6500 : 7000;
   }
 
   if (normalizedCandidate.startsWith(normalizedQuery)) {
-    return (850 - normalizedCandidate.length * 0.2) * fieldWeight;
+    return (3000 - normalizedCandidate.length * 0.2) * fieldWeight;
   }
 
   const index = normalizedCandidate.indexOf(normalizedQuery);
 
   if (index >= 0) {
-    return (680 - index * 2) * fieldWeight;
+    return (2200 - index * 2) * fieldWeight;
   }
 
   let queryIndex = 0;
@@ -101,7 +101,7 @@ function scoreCandidate(
     }
 
     if (queryIndex === normalizedQuery.length) {
-      return Math.max(120, 460 - gapPenalty * 4) * fieldWeight;
+      return Math.max(800, 1600 - gapPenalty * 4) * fieldWeight;
     }
   }
 
@@ -138,6 +138,7 @@ function getHighlights(
 
 export function createSuggestionResult(
   command: CommandDefinition,
+  meta?: string,
 ): CommandSearchResult {
   return {
     command,
@@ -148,6 +149,7 @@ export function createSuggestionResult(
       description: [],
       aliases: [],
     },
+    meta,
   };
 }
 
@@ -155,11 +157,12 @@ export function searchCommands(
   commands: readonly CommandDefinition[],
   query: string,
   usageCounts: ReadonlyMap<CommandDefinition["id"], number>,
+  recentCommandIds: readonly CommandDefinition["id"][],
 ): readonly CommandSearchResult[] {
   const trimmedQuery = query.trim();
 
   if (!trimmedQuery) {
-    return commands.map(createSuggestionResult);
+    return commands.map((command) => createSuggestionResult(command));
   }
 
   return commands
@@ -184,13 +187,15 @@ export function searchCommands(
         return [];
       }
 
-      const usageBoost = Math.min(80, (usageCounts.get(command.id) ?? 0) * 10);
+      const recentIndex = recentCommandIds.indexOf(command.id);
+      const usageBoost = Math.min(900, (usageCounts.get(command.id) ?? 0) * 40);
+      const recentBoost = recentIndex >= 0 ? Math.max(80, 420 - recentIndex * 60) : 0;
       const priorityBoost = command.priority ?? 0;
 
       return [
         {
           command,
-          score: bestMatch.score + priorityBoost + usageBoost,
+          score: bestMatch.score + usageBoost + recentBoost + priorityBoost,
           matchField: bestMatch.field,
           highlights: getHighlights(command, trimmedQuery),
         },
