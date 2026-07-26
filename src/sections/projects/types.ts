@@ -4,6 +4,7 @@ export interface ProjectLink {
 }
 
 export interface ProjectRecord {
+  id: string;
   title: string;
   shortDescription: string;
   category: string;
@@ -12,8 +13,16 @@ export interface ProjectRecord {
   technologies: readonly string[];
   featured: boolean;
   slug: string;
+  caseStudyPath?: string;
+  metadata?: readonly ProjectMetadataItem[];
   thumbnail?: string;
   links?: readonly ProjectLink[];
+}
+
+export interface ProjectMetadataItem {
+  id: string;
+  label: string;
+  value: string;
 }
 
 export interface ProjectsContent {
@@ -28,4 +37,3 @@ export interface ProjectsContent {
   };
   projects: readonly ProjectRecord[];
 }
-

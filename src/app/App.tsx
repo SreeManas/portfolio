@@ -1,5 +1,7 @@
 import type { ReactElement } from "react";
 
+import { Footer } from "@/components/layout/Footer";
+import { footerContent } from "@/content/footer";
 import { RootLayout } from "@/app/RootLayout";
 import { Hero } from "@/sections/hero/Hero";
 import { About } from "@/sections/about/About";
@@ -9,6 +11,9 @@ import { FeaturedProject } from "@/sections/featured-project/FeaturedProject";
 import { FeaturedProjects } from "@/sections/projects/FeaturedProjects";
 import { EngineeringJournal } from "@/sections/journal/EngineeringJournal";
 import { CurrentlyBuilding } from "@/sections/currently-building/CurrentlyBuilding";
+import { Skills } from "@/sections/skills/Skills";
+import { Journey } from "@/sections/journey/Journey";
+import { Contact } from "@/sections/contact/Contact";
 
 export function App(): ReactElement {
   return (
@@ -26,7 +31,11 @@ export function App(): ReactElement {
         <FeaturedProject />
         <EngineeringJournal />
         <CurrentlyBuilding />
+        <Skills />
+        <Journey />
+        <Contact />
       </main>
+      <Footer content={footerContent} />
     </RootLayout>
   );
 }

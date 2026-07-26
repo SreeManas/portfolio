@@ -32,7 +32,7 @@ export function FeaturedProjects(): ReactElement {
           <ol className="divide-y divide-border border-y border-border">
             {projectsContent.projects.map((project) => (
               <ProjectRecordItem
-                key={project.slug}
+                key={project.id}
                 project={project}
                 metadataLabels={projectsContent.metadataLabels}
               />
@@ -43,4 +43,3 @@ export function FeaturedProjects(): ReactElement {
     </Section>
   );
 }
-

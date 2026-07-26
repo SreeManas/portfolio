@@ -13,6 +13,7 @@ export const projectsContent = {
   },
   projects: [
     {
+      id: "medrouter",
       title: "MEDROUTER",
       shortDescription:
         "Version 0.1 description for an emergency routing decision-support system.",
@@ -22,8 +23,13 @@ export const projectsContent = {
       technologies: ["React", "Firebase", "Mapbox", "LLM Systems"],
       featured: true,
       slug: "medrouter",
+      caseStudyPath: "#case-note",
+      metadata: [
+        { id: "case-study", label: "Future Page", value: "Ready for route" },
+      ],
     },
     {
+      id: "bhagavadgeetha-io",
       title: "BhagavadGeetha.io",
       shortDescription:
         "Version 0.1 description for a reflective reading and interpretation project.",
@@ -33,8 +39,12 @@ export const projectsContent = {
       technologies: ["React", "TypeScript", "Content Systems"],
       featured: false,
       slug: "bhagavadgeetha-io",
+      metadata: [
+        { id: "case-study", label: "Future Page", value: "Planned" },
+      ],
     },
     {
+      id: "nova",
       title: "NOVA",
       shortDescription:
         "Version 0.1 description for an experimental AI assistant system.",
@@ -44,8 +54,12 @@ export const projectsContent = {
       technologies: ["LLMs", "Evaluation", "Product Systems"],
       featured: false,
       slug: "nova",
+      metadata: [
+        { id: "case-study", label: "Future Page", value: "Planned" },
+      ],
     },
     {
+      id: "ai-healthcare-research",
       title: "AI Healthcare Research",
       shortDescription:
         "Version 0.1 description for research notes at the intersection of AI and healthcare workflows.",
@@ -55,8 +69,12 @@ export const projectsContent = {
       technologies: ["Evaluation", "Medical AI", "Research Notes"],
       featured: false,
       slug: "ai-healthcare-research",
+      metadata: [
+        { id: "case-study", label: "Future Page", value: "Planned" },
+      ],
     },
     {
+      id: "experimental-projects",
       title: "Experimental Projects",
       shortDescription:
         "Version 0.1 description for smaller prototypes, interface tests, and engineering studies.",
@@ -66,7 +84,9 @@ export const projectsContent = {
       technologies: ["Prototyping", "Interfaces", "Systems"],
       featured: false,
       slug: "experimental-projects",
+      metadata: [
+        { id: "case-study", label: "Future Page", value: "Planned" },
+      ],
     },
   ],
 } satisfies ProjectsContent;
-
