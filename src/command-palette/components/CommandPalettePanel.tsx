@@ -2,6 +2,7 @@ import type { ChangeEvent, ReactElement, RefObject } from "react";
 import { motion } from "framer-motion";
 
 import { CommandGroup } from "@/command-palette/components/CommandGroup";
+import { CommandPaletteFooter } from "@/command-palette/components/CommandPaletteFooter";
 import { SearchGlyph } from "@/command-palette/components/SearchGlyph";
 import type { CommandGroupView } from "@/command-palette/lib/grouping";
 import type {
@@ -49,12 +50,14 @@ export function CommandPalettePanel({
     onQueryChange(event.target.value);
   }
 
+  const isSearching = query.trim().length > 0;
+
   return (
     <motion.div
       role="dialog"
       aria-modal="true"
       aria-labelledby="command-palette-title"
-      className="relative w-full max-w-[44rem] overflow-hidden rounded-[0.75rem] border border-border bg-paper shadow-[0_1.5rem_5rem_rgb(24_22_17_/_0.28)]"
+      className="relative flex w-full max-w-[44rem] flex-col overflow-hidden rounded-[0.75rem] border border-border bg-paper shadow-[0_1.5rem_5rem_rgb(24_22_17_/_0.28)]"
       initial={{ opacity: 0, scale: 0.985 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.985 }}
@@ -88,13 +91,14 @@ export function CommandPalettePanel({
       <div
         id="command-palette-results"
         role="listbox"
-        aria-label={query.trim() ? content.resultsLabel : content.emptyLabel}
-        className="max-h-[min(28rem,calc(100dvh-11rem))] overflow-y-auto px-2 pb-3"
+        aria-label={isSearching ? content.resultsLabel : content.emptyLabel}
+        className="max-h-[min(28rem,calc(100dvh-14rem))] overflow-y-auto px-2 pb-2 pt-1"
       >
         {hasResults ? (
           groups.map((group, groupIndex) => (
             <motion.div
               key={group.id}
+              className="border-t border-border/70 pt-2 first:border-t-0 first:pt-0"
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{
@@ -105,7 +109,7 @@ export function CommandPalettePanel({
             >
               <CommandGroup
                 group={group}
-                categories={content.categories}
+                isSearching={isSearching}
                 selectedCommandId={selectedCommandId}
                 getCommandIndex={getCommandIndex}
                 onExecute={onExecute}
@@ -130,8 +134,13 @@ export function CommandPalettePanel({
         onClick={onClose}
         className="sr-only"
       >
-        Close
+        {content.closeLabel}
       </button>
+
+      <CommandPaletteFooter
+        shortcuts={content.footerShortcuts}
+        shortcutHint={shortcutHint}
+      />
     </motion.div>
   );
 }

@@ -59,7 +59,13 @@ export function searchCommands(
 
   return commands
     .map((command) => {
-      const candidates = [command.title, command.category, ...command.keywords];
+      const candidates = [
+        command.title,
+        command.description,
+        command.category,
+        ...command.keywords,
+        ...command.aliases,
+      ];
       const score = Math.max(
         ...candidates.map((candidate) => scoreCandidate(trimmedQuery, candidate)),
       );

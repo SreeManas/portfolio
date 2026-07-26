@@ -119,7 +119,9 @@ export function useCommandPalette(
       if (isShortcut) {
         event.preventDefault();
 
-        if (!isOpen) {
+        if (isOpen) {
+          closePalette();
+        } else {
           openPalette();
         }
 

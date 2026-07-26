@@ -35,9 +35,12 @@ export type CommandAction =
 export interface CommandDefinition {
   id: string;
   title: string;
+  description: string;
   category: CommandCategory;
   action: CommandAction;
   keywords: readonly string[];
+  aliases: readonly string[];
+  indicator: string;
   shortcut?: string;
   disabled?: boolean;
   disabledReason?: string;
@@ -59,6 +62,7 @@ export interface CommandPaletteContent {
   title: string;
   inputLabel: string;
   resultsLabel: string;
+  closeLabel: string;
   placeholder: string;
   shortcutHint: {
     mac: string;
@@ -68,6 +72,11 @@ export interface CommandPaletteContent {
   noResultsTitle: string;
   noResultsDescription: string;
   mobileTriggerLabel: string;
+  footerShortcuts: readonly {
+    id: string;
+    keys: string;
+    label: string;
+  }[];
   categories: readonly CommandCategoryDefinition[];
   suggestionGroups: readonly CommandSuggestionGroup[];
   commands: readonly CommandDefinition[];
