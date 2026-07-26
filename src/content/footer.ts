@@ -4,10 +4,10 @@ export const footerContent = {
   copyright: "© 2026 K. Sree Manas",
   navigationLabel: "Navigation",
   navigation: [
-    { id: "work", label: "Work", href: "#projects" },
-    { id: "notes", label: "Notes", href: "#journal" },
-    { id: "journey", label: "Journey", href: "#journey" },
-    { id: "contact", label: "Contact", href: "#contact" },
+    { id: "work", label: "Work", href: "/projects" },
+    { id: "notes", label: "Notes", href: "/#journal" },
+    { id: "journey", label: "Journey", href: "/#journey" },
+    { id: "contact", label: "Contact", href: "/#contact" },
   ],
   socialLabel: "Social",
   socialLinks: [

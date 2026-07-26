@@ -12,7 +12,7 @@ export const heroContent = {
     },
     {
       label: "Projects",
-      href: "#projects",
+      href: "/projects",
     },
     {
       label: "About",

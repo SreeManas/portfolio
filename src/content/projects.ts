@@ -187,7 +187,7 @@ export const medrouterProject = {
   featured: true,
   route: {
     path: "/projects/medrouter",
-    enabled: false,
+    enabled: true,
   },
   display: {
     sectionId: "featured-project",
@@ -326,47 +326,26 @@ function createPlaceholderProject(
 export const projectCaseStudies = [
   medrouterProject,
   createPlaceholderProject({
-    id: "bhagavadgeetha-io",
-    slug: "bhagavadgeetha",
-    title: "BhagavadGeetha.io",
+    id: "under-development",
+    slug: "under-development",
+    title: "🚧 Under Development",
     tagline:
-      "Version 0.1 description for a reflective reading and interpretation project.",
-    category: "Knowledge Interface",
-    status: "In progress",
+      "Building the next flagship AI project. This space is intentionally reserved for future engineering work. Case study coming soon.",
+    category: "AI Systems",
+    status: "Coming Soon",
     year: "2026",
-    technologies: ["React", "TypeScript", "Content Systems"],
+    technologies: ["AI Systems", "Product Architecture", "Evaluation"],
   }),
   createPlaceholderProject({
-    id: "nova",
-    slug: "nova",
-    title: "NOVA",
-    tagline: "Version 0.1 description for an experimental AI assistant system.",
-    category: "Agentic Systems",
+    id: "experimental-project",
+    slug: "experimental-project",
+    title: "🧪 Experimental Project",
+    tagline:
+      "Currently exploring AI systems, developer tools and scalable software architecture. A full case study will be published once the project reaches production quality.",
+    category: "Developer Tools",
     status: "Prototype",
     year: "2026",
-    technologies: ["LLMs", "Evaluation", "Product Systems"],
-  }),
-  createPlaceholderProject({
-    id: "ai-healthcare-research",
-    slug: "ai-healthcare-research",
-    title: "AI Healthcare Research",
-    tagline:
-      "Version 0.1 description for research notes at the intersection of AI and healthcare workflows.",
-    category: "Research",
-    status: "Ongoing",
-    year: "2026",
-    technologies: ["Evaluation", "Medical AI", "Research Notes"],
-  }),
-  createPlaceholderProject({
-    id: "experimental-projects",
-    slug: "experimental-projects",
-    title: "Experimental Projects",
-    tagline:
-      "Version 0.1 description for smaller prototypes, interface tests, and engineering studies.",
-    category: "Experiments",
-    status: "Collected notes",
-    year: "2026",
-    technologies: ["Prototyping", "Interfaces", "Systems"],
+    technologies: ["AI Systems", "Developer Tooling", "Architecture"],
   }),
 ] satisfies readonly ProjectCaseStudy[];
 
