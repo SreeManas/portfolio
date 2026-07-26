@@ -1,25 +1,24 @@
 import type { ReactElement } from "react";
 
 import { SectionLabel } from "@/components/editorial/SectionLabel";
-import type { CaseStudyPipelineStep } from "@/sections/featured-project/types";
+import type { ProjectPipeline } from "@/project-engine/types";
 
-interface DecisionPipelineProps {
-  label: string;
-  steps: readonly CaseStudyPipelineStep[];
+interface ProjectDecisionPipelineProps {
+  pipeline: ProjectPipeline;
 }
 
-export function DecisionPipeline({
-  label,
-  steps,
-}: DecisionPipelineProps): ReactElement {
+export function ProjectDecisionPipeline({
+  pipeline,
+}: ProjectDecisionPipelineProps): ReactElement {
   return (
-    <section aria-labelledby="decision-pipeline-title">
-      <SectionLabel className="text-accent">{label}</SectionLabel>
+    <section aria-labelledby={`${pipeline.id}-label`}>
+      <SectionLabel id={`${pipeline.id}-label`} className="text-accent">
+        {pipeline.label}
+      </SectionLabel>
       <ol
-        id="decision-pipeline-title"
         className="mt-5 divide-y divide-border border-y border-border"
       >
-        {steps.map((step, index) => (
+        {pipeline.steps.map((step, index) => (
           <li key={step.id} className="grid gap-3 py-4 sm:grid-cols-[4rem_1fr]">
             <p className="font-mono text-xs uppercase leading-6 text-muted-foreground">
               {String(index + 1).padStart(2, "0")}
@@ -31,4 +30,3 @@ export function DecisionPipeline({
     </section>
   );
 }
-

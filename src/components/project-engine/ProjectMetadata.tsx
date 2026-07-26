@@ -1,16 +1,20 @@
 import type { ReactElement } from "react";
 
 import { SectionLabel } from "@/components/editorial/SectionLabel";
-import type { CaseStudyEvidenceItem } from "@/sections/featured-project/types";
+import type { ProjectMetadataItem } from "@/project-engine/types";
 
-interface EvidenceRailProps {
-  items: readonly CaseStudyEvidenceItem[];
+interface ProjectMetadataProps {
+  label: string;
+  items: readonly ProjectMetadataItem[];
 }
 
-export function EvidenceRail({ items }: EvidenceRailProps): ReactElement {
+export function ProjectMetadata({
+  label,
+  items,
+}: ProjectMetadataProps): ReactElement {
   return (
-    <aside aria-label="Case study evidence" className="lg:sticky lg:top-10">
-      <SectionLabel className="text-accent">Evidence Rail</SectionLabel>
+    <aside aria-label={label} className="lg:sticky lg:top-10">
+      <SectionLabel className="text-accent">{label}</SectionLabel>
       <dl className="mt-5 divide-y divide-border border-y border-border">
         {items.map((item) => (
           <div key={item.id} className="py-4">
@@ -35,4 +39,3 @@ export function EvidenceRail({ items }: EvidenceRailProps): ReactElement {
     </aside>
   );
 }
-

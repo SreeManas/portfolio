@@ -1,29 +1,4 @@
-export interface ProjectLink {
-  label: string;
-  href: string;
-}
-
-export interface ProjectRecord {
-  id: string;
-  title: string;
-  shortDescription: string;
-  category: string;
-  status: string;
-  year: string;
-  technologies: readonly string[];
-  featured: boolean;
-  slug: string;
-  caseStudyPath?: string;
-  metadata?: readonly ProjectMetadataItem[];
-  thumbnail?: string;
-  links?: readonly ProjectLink[];
-}
-
-export interface ProjectMetadataItem {
-  id: string;
-  label: string;
-  value: string;
-}
+import type { ProjectCaseStudy } from "@/project-engine/types";
 
 export interface ProjectsContent {
   id: string;
@@ -35,5 +10,5 @@ export interface ProjectsContent {
     category: string;
     year: string;
   };
-  projects: readonly ProjectRecord[];
+  projects: readonly ProjectCaseStudy[];
 }
