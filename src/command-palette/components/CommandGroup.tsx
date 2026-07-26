@@ -2,7 +2,7 @@ import type { ReactElement } from "react";
 
 import { CommandItem } from "@/command-palette/components/CommandItem";
 import type { CommandGroupView } from "@/command-palette/lib/grouping";
-import type { CommandDefinition } from "@/command-palette/types";
+import type { CommandDefinition, CommandSearchResult } from "@/command-palette/types";
 
 interface CommandGroupProps {
   group: CommandGroupView;
@@ -33,13 +33,14 @@ export function CommandGroup({
         <div aria-hidden="true" className="h-px flex-1 bg-border" />
       </div>
       <ul className="space-y-1">
-        {group.commands.map((command) => {
+        {group.results.map((result: CommandSearchResult) => {
+          const { command } = result;
           const commandIndex = getCommandIndex(command);
 
           return (
             <CommandItem
               key={command.id}
-              command={command}
+              result={result}
               isSearching={isSearching}
               isSelected={selectedCommandId === command.id}
               onSelect={() => onExecute(command)}

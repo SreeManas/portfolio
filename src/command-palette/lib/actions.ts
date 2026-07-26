@@ -31,6 +31,10 @@ function downloadFile(href: string, filename?: string): void {
   link.remove();
 }
 
+function getAbsoluteUrl(href: string): string {
+  return new URL(href, window.location.origin).toString();
+}
+
 async function copyToClipboard(value: string): Promise<void> {
   if (navigator.clipboard) {
     await navigator.clipboard.writeText(value);
@@ -73,6 +77,18 @@ export async function executeCommandAction(
 
   if (action.type === "mailto") {
     window.location.href = action.href;
+    return true;
+  }
+
+  if (action.type === "copy-current-url") {
+    await copyToClipboard(window.location.href);
+    options.onSuccess(action.successMessage);
+    return true;
+  }
+
+  if (action.type === "copy-url") {
+    await copyToClipboard(getAbsoluteUrl(action.href));
+    options.onSuccess(action.successMessage);
     return true;
   }
 

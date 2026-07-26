@@ -2,12 +2,14 @@ import type { ChangeEvent, ReactElement, RefObject } from "react";
 import { motion } from "framer-motion";
 
 import { CommandGroup } from "@/command-palette/components/CommandGroup";
+import { CommandItem } from "@/command-palette/components/CommandItem";
 import { CommandPaletteFooter } from "@/command-palette/components/CommandPaletteFooter";
 import { SearchGlyph } from "@/command-palette/components/SearchGlyph";
 import type { CommandGroupView } from "@/command-palette/lib/grouping";
 import type {
   CommandDefinition,
   CommandPaletteContent,
+  CommandSearchResult,
 } from "@/command-palette/types";
 import { Kbd } from "@/components/ui/Kbd";
 import { VisuallyHidden } from "@/components/ui/VisuallyHidden";
@@ -15,6 +17,7 @@ import { VisuallyHidden } from "@/components/ui/VisuallyHidden";
 interface CommandPalettePanelProps {
   content: CommandPaletteContent;
   groups: readonly CommandGroupView[];
+  noResultSuggestions: readonly CommandSearchResult[];
   query: string;
   shortcutHint: string;
   selectedCommandId: string | undefined;
@@ -34,6 +37,7 @@ const panelTransition = {
 export function CommandPalettePanel({
   content,
   groups,
+  noResultSuggestions,
   query,
   shortcutHint,
   selectedCommandId,
@@ -45,6 +49,7 @@ export function CommandPalettePanel({
   getCommandIndex,
 }: CommandPalettePanelProps): ReactElement {
   const hasResults = groups.length > 0;
+  const hasNoResultSuggestions = noResultSuggestions.length > 0;
 
   function handleQueryChange(event: ChangeEvent<HTMLInputElement>): void {
     onQueryChange(event.target.value);
@@ -125,6 +130,28 @@ export function CommandPalettePanel({
             <p className="mt-1 text-sm leading-6 text-muted-foreground">
               {content.noResultsDescription}
             </p>
+            {hasNoResultSuggestions ? (
+              <div className="mt-6">
+                <div className="mb-2 flex items-center gap-3">
+                  <h3 className="shrink-0 font-mono text-[0.6875rem] uppercase leading-5 text-muted-foreground">
+                    {content.noResultsSuggestionLabel}
+                  </h3>
+                  <div aria-hidden="true" className="h-px flex-1 bg-border" />
+                </div>
+                <ul className="space-y-1">
+                  {noResultSuggestions.map((result) => (
+                    <CommandItem
+                      key={result.command.id}
+                      result={result}
+                      isSearching={false}
+                      isSelected={selectedCommandId === result.command.id}
+                      onSelect={() => onExecute(result.command)}
+                      onHover={() => onHover(getCommandIndex(result.command))}
+                    />
+                  ))}
+                </ul>
+              </div>
+            ) : null}
           </div>
         )}
       </div>
@@ -139,7 +166,6 @@ export function CommandPalettePanel({
 
       <CommandPaletteFooter
         shortcuts={content.footerShortcuts}
-        shortcutHint={shortcutHint}
       />
     </motion.div>
   );

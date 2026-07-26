@@ -1,9 +1,12 @@
 export type CommandCategory =
   | "navigation"
   | "project"
+  | "skill"
+  | "note"
+  | "journey"
   | "action"
   | "external"
-  | "theme";
+  | "future-ai";
 
 export type CommandAction =
   | {
@@ -29,8 +32,30 @@ export type CommandAction =
       successMessage: string;
     }
   | {
+      type: "copy-current-url";
+      successMessage: string;
+    }
+  | {
+      type: "copy-url";
+      href: string;
+      successMessage: string;
+    }
+  | {
       type: "disabled";
     };
+
+export type SearchableField = "title" | "description" | "alias";
+
+export interface CommandHighlightRange {
+  start: number;
+  end: number;
+}
+
+export interface CommandHighlights {
+  title: readonly CommandHighlightRange[];
+  description: readonly CommandHighlightRange[];
+  aliases: readonly string[];
+}
 
 export interface CommandDefinition {
   id: string;
@@ -41,10 +66,10 @@ export interface CommandDefinition {
   keywords: readonly string[];
   aliases: readonly string[];
   indicator: string;
+  priority?: number;
   shortcut?: string;
   disabled?: boolean;
   disabledReason?: string;
-  suggestionGroup?: string;
 }
 
 export interface CommandCategoryDefinition {
@@ -71,7 +96,10 @@ export interface CommandPaletteContent {
   emptyLabel: string;
   noResultsTitle: string;
   noResultsDescription: string;
+  noResultsSuggestionLabel: string;
+  noResultsSuggestionCommandIds: readonly CommandDefinition["id"][];
   mobileTriggerLabel: string;
+  firstVisitHintTemplate: string;
   footerShortcuts: readonly {
     id: string;
     keys: string;
@@ -79,10 +107,16 @@ export interface CommandPaletteContent {
   }[];
   categories: readonly CommandCategoryDefinition[];
   suggestionGroups: readonly CommandSuggestionGroup[];
-  commands: readonly CommandDefinition[];
 }
 
 export interface CommandSearchResult {
   command: CommandDefinition;
   score: number;
+  matchField: SearchableField | "content" | "suggestion";
+  highlights: CommandHighlights;
+}
+
+export interface CommandRegistry {
+  commands: readonly CommandDefinition[];
+  commandById: ReadonlyMap<CommandDefinition["id"], CommandDefinition>;
 }

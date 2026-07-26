@@ -1,10 +1,17 @@
 import type { ReactElement } from "react";
+import { useMemo } from "react";
 
 import { Container } from "@/components/layout/Container";
 import { Kbd } from "@/components/ui/Kbd";
 import { heroContent } from "@/content/hero";
+import { getModifierKey } from "@/command-palette/lib/platform";
 
 export function Hero(): ReactElement {
+  const shortcutKeys = useMemo(
+    () => [getModifierKey(), heroContent.shortcutKey],
+    [],
+  );
+
   return (
     <section
       id="hero"
@@ -43,7 +50,7 @@ export function Hero(): ReactElement {
               aria-label={heroContent.shortcutLabel}
               className="flex items-center gap-1.5 lg:justify-end"
             >
-              {heroContent.shortcutKeys.map((key, index) => (
+              {shortcutKeys.map((key, index) => (
                 <span key={key} className="flex items-center gap-1.5">
                   {index > 0 ? (
                     <span aria-hidden="true" className="font-mono text-xs">

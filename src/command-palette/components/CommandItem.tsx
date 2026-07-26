@@ -1,10 +1,11 @@
 import { useEffect, useRef, type ReactElement } from "react";
 
+import { HighlightedText } from "@/command-palette/components/HighlightedText";
 import { cn } from "@/lib/cn";
-import type { CommandDefinition } from "@/command-palette/types";
+import type { CommandSearchResult } from "@/command-palette/types";
 
 interface CommandItemProps {
-  command: CommandDefinition;
+  result: CommandSearchResult;
   isSearching: boolean;
   isSelected: boolean;
   onSelect: () => void;
@@ -12,13 +13,14 @@ interface CommandItemProps {
 }
 
 export function CommandItem({
-  command,
+  result,
   isSearching,
   isSelected,
   onSelect,
   onHover,
 }: CommandItemProps): ReactElement {
   const itemRef = useRef<HTMLLIElement>(null);
+  const { command, highlights } = result;
 
   useEffect(() => {
     if (!isSelected) {
@@ -54,14 +56,17 @@ export function CommandItem({
       >
         <span className="min-w-0">
           <span className="block text-sm font-medium leading-5">
-            {command.title}
+            <HighlightedText text={command.title} ranges={highlights.title} />
           </span>
           <span className="mt-1 block text-sm leading-5 text-muted-foreground">
-            {command.description}
+            <HighlightedText
+              text={command.description}
+              ranges={highlights.description}
+            />
           </span>
-          {isSearching && command.aliases.length > 0 ? (
+          {isSearching && highlights.aliases.length > 0 ? (
             <span className="mt-1 block truncate font-mono text-[0.6875rem] uppercase leading-5 text-muted-foreground/80">
-              {command.aliases.join(" • ")}
+              {highlights.aliases.join(" • ")}
             </span>
           ) : null}
         </span>

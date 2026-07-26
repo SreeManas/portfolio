@@ -1,43 +1,57 @@
 import type {
-  CommandDefinition,
   CommandPaletteContent,
+  CommandRegistry,
+  CommandSearchResult,
 } from "@/command-palette/types";
+import { createSuggestionResult } from "@/command-palette/lib/search";
 
 export interface CommandGroupView {
   id: string;
   label: string;
-  commands: readonly CommandDefinition[];
+  results: readonly CommandSearchResult[];
 }
 
-export function groupCommands(
-  content: CommandPaletteContent,
-  query: string,
-  visibleCommands: readonly CommandDefinition[],
-): readonly CommandGroupView[] {
-  const commandMap = new Map(
-    visibleCommands.map((command) => [command.id, command] as const),
-  );
+function getResultsByIds(
+  commandIds: readonly string[],
+  registry: CommandRegistry,
+): readonly CommandSearchResult[] {
+  return commandIds.flatMap((commandId) => {
+    const command = registry.commandById.get(commandId);
+    return command ? [createSuggestionResult(command)] : [];
+  });
+}
 
+export function groupCommandResults(
+  content: CommandPaletteContent,
+  registry: CommandRegistry,
+  query: string,
+  visibleResults: readonly CommandSearchResult[],
+): readonly CommandGroupView[] {
   if (!query.trim()) {
     return content.suggestionGroups
       .map((group) => ({
         id: group.id,
         label: group.label,
-        commands: group.commandIds.flatMap((commandId) => {
-          const command = commandMap.get(commandId);
-          return command ? [command] : [];
-        }),
+        results: getResultsByIds(group.commandIds, registry),
       }))
-      .filter((group) => group.commands.length > 0);
+      .filter((group) => group.results.length > 0);
   }
 
   return content.categories
     .map((category) => ({
       id: category.id,
       label: category.label,
-      commands: visibleCommands.filter(
-        (command) => command.category === category.id,
+      results: visibleResults.filter(
+        (result) => result.command.category === category.id,
       ),
     }))
-    .filter((group) => group.commands.length > 0);
+    .filter((group) => group.results.length > 0)
+    .sort((first, second) => second.results[0].score - first.results[0].score);
+}
+
+export function getNoResultSuggestions(
+  content: CommandPaletteContent,
+  registry: CommandRegistry,
+): readonly CommandSearchResult[] {
+  return getResultsByIds(content.noResultsSuggestionCommandIds, registry);
 }

@@ -20,7 +20,7 @@ export const heroContent = {
     },
   ],
   shortcutLabel: "Open command center",
-  shortcutKeys: ["Ctrl", "K"],
+  shortcutKey: "K",
   shortcutSeparator: "+",
   eyebrow: "CURRENT MISSION",
   title: "I build AI systems that help people make better decisions.",

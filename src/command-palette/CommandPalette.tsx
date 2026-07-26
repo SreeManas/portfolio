@@ -4,8 +4,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { CommandPalettePanel } from "@/command-palette/components/CommandPalettePanel";
 import { CommandToast } from "@/command-palette/components/CommandToast";
 import { MobileCommandTrigger } from "@/command-palette/components/MobileCommandTrigger";
-import { groupCommands } from "@/command-palette/lib/grouping";
+import {
+  getNoResultSuggestions,
+  groupCommandResults,
+} from "@/command-palette/lib/grouping";
 import { useCommandPalette } from "@/command-palette/hooks/useCommandPalette";
+import { commandRegistry } from "@/command-palette/registry";
 import { commandPaletteContent } from "@/content/commandPalette";
 import type { CommandDefinition } from "@/command-palette/types";
 
@@ -22,23 +26,41 @@ export function CommandPalette(): ReactElement {
     closePalette,
     query,
     setQuery,
-    visibleCommands,
+    visibleResults,
+    hasSearchMatches,
     selectedCommandId,
     executeCommand,
     setSelectedIndex,
     shortcutHint,
+    showFirstVisitHint,
     toastMessage,
-  } = useCommandPalette(commandPaletteContent);
+  } = useCommandPalette(commandPaletteContent, commandRegistry);
 
   const groups = useMemo(
-    () => groupCommands(commandPaletteContent, query, visibleCommands),
-    [query, visibleCommands],
+    () =>
+      hasSearchMatches
+        ? groupCommandResults(
+            commandPaletteContent,
+            commandRegistry,
+            query,
+            visibleResults,
+          )
+        : [],
+    [hasSearchMatches, query, visibleResults],
+  );
+
+  const noResultSuggestions = useMemo(
+    () =>
+      hasSearchMatches
+        ? getNoResultSuggestions(commandPaletteContent, commandRegistry)
+        : visibleResults,
+    [hasSearchMatches, visibleResults],
   );
 
   const getCommandIndex = useCallback(
     (command: CommandDefinition) =>
-      visibleCommands.findIndex((item) => item.id === command.id),
-    [visibleCommands],
+      visibleResults.findIndex((item) => item.command.id === command.id),
+    [visibleResults],
   );
 
   useEffect(() => {
@@ -58,6 +80,15 @@ export function CommandPalette(): ReactElement {
         onOpen={openPalette}
       />
 
+      {showFirstVisitHint ? (
+        <div className="fixed bottom-5 right-5 z-30 hidden max-w-[18rem] rounded-panel border border-border bg-paper px-4 py-3 text-sm leading-6 text-muted-foreground shadow-soft md:block">
+          {commandPaletteContent.firstVisitHintTemplate.replace(
+            "{shortcut}",
+            shortcutHint,
+          )}
+        </div>
+      ) : null}
+
       <AnimatePresence>
         {isOpen ? (
           <motion.div
@@ -71,6 +102,7 @@ export function CommandPalette(): ReactElement {
             <CommandPalettePanel
               content={commandPaletteContent}
               groups={groups}
+              noResultSuggestions={noResultSuggestions}
               query={query}
               shortcutHint={shortcutHint}
               selectedCommandId={selectedCommandId}

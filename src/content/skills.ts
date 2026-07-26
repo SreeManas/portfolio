@@ -33,6 +33,7 @@ export const skillsContent = {
       skills: [
         { id: "node-js", label: "Node.js" },
         { id: "express", label: "Express" },
+        { id: "fastapi", label: "FastAPI" },
         { id: "api-design", label: "API Design" },
         { id: "auth-flows", label: "Auth Flows" },
       ],
@@ -42,6 +43,7 @@ export const skillsContent = {
       title: "AI / ML",
       skills: [
         { id: "llms", label: "LLMs" },
+        { id: "ollama", label: "Ollama" },
         { id: "prompt-systems", label: "Prompt Systems" },
         { id: "evaluation", label: "Evaluation" },
         { id: "decision-support", label: "Decision Support" },
