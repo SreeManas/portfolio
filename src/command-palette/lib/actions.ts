@@ -74,6 +74,11 @@ export async function executeCommandAction(
     return true;
   }
 
+  if (action.type === "navigate") {
+    window.location.assign(action.href);
+    return true;
+  }
+
   if (action.type === "open") {
     return openInNewTab(action.href);
   }

@@ -4,6 +4,7 @@ import { currentMissionContent } from "@/content/currentMission";
 import { engineeringPrinciplesContent } from "@/content/engineeringPrinciples";
 import { journalContent } from "@/content/journal";
 import { journeyContent } from "@/content/journey";
+import { getNotePath, notesContent } from "@/content/notes";
 import { projectsContent } from "@/content/projects";
 import { skillsContent } from "@/content/skills";
 import type {
@@ -130,12 +131,20 @@ const navigationCommands: readonly CommandDefinition[] = [
   {
     id: "nav-notes",
     title: "Notes",
-    description: "Engineering notebook",
+    description: "Engineering knowledge hub",
     category: "navigation",
-    action: { type: "scroll", targetId: journalContent.id },
+    action: { type: "navigate", href: "/notes" },
     keywords: [
+      notesContent.title,
+      notesContent.introduction,
       journalContent.title,
       journalContent.introduction,
+      ...notesContent.notes.flatMap((note) => [
+        note.title,
+        note.summary,
+        note.category,
+        ...note.tags,
+      ]),
       ...journalContent.entries.flatMap((entry) => [
         entry.title,
         entry.note,
@@ -143,7 +152,7 @@ const navigationCommands: readonly CommandDefinition[] = [
         ...(entry.tags ?? []),
       ]),
     ],
-    aliases: ["notes", "blog", "writing", "journal", "notebook"],
+    aliases: ["notes", "blog", "writing", "journal", "notebook", "knowledge"],
     indicator: "↵",
     priority: 78,
   },
@@ -245,23 +254,27 @@ const skillCommands: readonly CommandDefinition[] = skillsContent.groups.flatMap
     })),
 );
 
-const noteCommands: readonly CommandDefinition[] = journalContent.entries.map(
-  (entry) => ({
-    id: `note-${entry.id}`,
-    title: entry.title,
-    description: entry.note,
+const noteCommands: readonly CommandDefinition[] = notesContent.notes.map(
+  (note) => ({
+    id: `note-${note.id}`,
+    title: note.title,
+    description: note.summary,
     category: "note",
-    action: { type: "scroll", targetId: journalContent.id },
+    action: { type: "navigate", href: getNotePath(note.slug) },
     keywords: [
-      entry.title,
-      entry.note,
-      entry.category,
-      entry.date,
-      ...(entry.tags ?? []),
+      note.title,
+      note.summary,
+      note.category,
+      note.date,
+      ...note.tags,
     ],
-    aliases: [entry.title.toLowerCase(), entry.category.toLowerCase()],
+    aliases: [
+      note.slug,
+      note.title.toLowerCase(),
+      note.category.toLowerCase(),
+    ],
     indicator: "↵",
-    priority: 52,
+    priority: note.featured ? 70 : 52,
   }),
 );
 

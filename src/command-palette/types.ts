@@ -14,6 +14,10 @@ export type CommandAction =
       targetId: string;
     }
   | {
+      type: "navigate";
+      href: string;
+    }
+  | {
       type: "open";
       href: string;
     }

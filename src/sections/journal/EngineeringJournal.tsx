@@ -30,6 +30,14 @@ export function EngineeringJournal(): ReactElement {
           entries={journalContent.entries}
           ordering={journalContent.ordering}
         />
+
+        <a
+          href="/notes"
+          className="mt-10 inline-flex items-center gap-2 font-mono text-xs uppercase leading-6 text-muted-foreground underline-offset-4 transition-colors duration-200 ease-dossier hover:text-ink hover:underline focus-visible:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+        >
+          Open knowledge hub
+          <span aria-hidden="true">→</span>
+        </a>
       </Reveal>
     </Section>
   );

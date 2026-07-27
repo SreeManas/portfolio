@@ -7,8 +7,8 @@ export const heroContent = {
       href: "#work",
     },
     {
-      label: "Journal",
-      href: "#journal",
+      label: "Notes",
+      href: "/notes",
     },
     {
       label: "Projects",
