@@ -6,7 +6,7 @@ export const footerContent = {
   navigation: [
     { id: "work", label: "Work", href: "/projects" },
     { id: "notes", label: "Notes", href: "/notes" },
-    { id: "journey", label: "Journey", href: "/#journey" },
+    { id: "journey", label: "Journey", href: "/journey" },
     { id: "contact", label: "Contact", href: "/#contact" },
   ],
   socialLabel: "Social",

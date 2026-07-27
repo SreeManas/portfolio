@@ -4,6 +4,7 @@ import { currentMissionContent } from "@/content/currentMission";
 import { engineeringPrinciplesContent } from "@/content/engineeringPrinciples";
 import { journalContent } from "@/content/journal";
 import { journeyContent } from "@/content/journey";
+import { journeyExperienceContent } from "@/content/journeyExperience";
 import { getNotePath, notesContent } from "@/content/notes";
 import { projectsContent } from "@/content/projects";
 import { skillsContent } from "@/content/skills";
@@ -159,19 +160,24 @@ const navigationCommands: readonly CommandDefinition[] = [
   {
     id: "nav-journey",
     title: "Journey",
-    description: "Career timeline",
+    description: "Engineering journey experience",
     category: "navigation",
-    action: { type: "scroll", targetId: journeyContent.id },
+    action: { type: "navigate", href: "/journey" },
     keywords: [
       journeyContent.title,
       journeyContent.introduction,
-      ...journeyContent.milestones.flatMap((milestone) => [
-        milestone.year,
-        milestone.title,
-        milestone.description,
+      journeyExperienceContent.hero.title,
+      journeyExperienceContent.hero.description,
+      ...journeyExperienceContent.timeline.items.flatMap((item) => [
+        item.year,
+        item.title,
+        item.summary,
+        item.category,
       ]),
       "hackathon",
       "hya",
+      "leadership",
+      "medrouter",
     ],
     aliases: ["journey", "timeline", "career", "path"],
     indicator: "↵",
@@ -278,29 +284,21 @@ const noteCommands: readonly CommandDefinition[] = notesContent.notes.map(
   }),
 );
 
-const journeyAliasesById: Record<string, readonly string[]> = {
-  "student-leadership": ["hya", "hyderabad youth assembly", "leadership"],
-  "product-experiments": ["hackathon", "prototype", "podpreneur"],
-};
-
 const journeyCommands: readonly CommandDefinition[] =
-  journeyContent.milestones.map((milestone) => ({
-    id: `journey-${milestone.id}`,
-    title: milestone.title,
-    description: milestone.description,
+  journeyExperienceContent.timeline.items.map((item) => ({
+    id: `journey-${item.id}`,
+    title: item.title,
+    description: item.summary,
     category: "journey",
-    action: { type: "scroll", targetId: journeyContent.id },
+    action: { type: "navigate", href: "/journey" },
     keywords: [
-      milestone.year,
-      milestone.title,
-      milestone.description,
-      ...(journeyAliasesById[milestone.id] ?? []),
+      item.year,
+      item.title,
+      item.summary,
+      item.details,
+      item.category,
     ],
-    aliases: [
-      milestone.year,
-      milestone.title.toLowerCase(),
-      ...(journeyAliasesById[milestone.id] ?? []),
-    ],
+    aliases: [item.title.toLowerCase(), item.category.toLowerCase()],
     indicator: "↵",
     priority: 54,
   }));

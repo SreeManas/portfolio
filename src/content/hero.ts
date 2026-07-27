@@ -15,6 +15,10 @@ export const heroContent = {
       href: "/projects",
     },
     {
+      label: "Journey",
+      href: "/journey",
+    },
+    {
       label: "About",
       href: "#about",
     },

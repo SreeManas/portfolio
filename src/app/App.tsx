@@ -6,6 +6,7 @@ import { footerContent } from "@/content/footer";
 import { getNoteBySlug } from "@/content/notes";
 import { RootLayout } from "@/app/RootLayout";
 import { HomePage } from "@/pages/HomePage";
+import { JourneyPage } from "@/pages/journey/JourneyPage";
 import { NoteDetailPage } from "@/pages/notes/NoteDetailPage";
 import { NoteNotFoundPage } from "@/pages/notes/NoteNotFoundPage";
 import { NotesPage } from "@/pages/notes/NotesPage";
@@ -19,6 +20,10 @@ function resolvePage(path: string): ReactElement {
 
   if (path === "/projects/medrouter") {
     return <MedrouterProjectPage />;
+  }
+
+  if (path === "/journey") {
+    return <JourneyPage />;
   }
 
   if (path === "/notes") {
