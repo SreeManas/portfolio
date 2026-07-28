@@ -2,7 +2,7 @@ import type { ReactElement } from "react";
 
 import { ProjectStatusBadge } from "@/sections/projects/components/ProjectStatusBadge";
 import { TechnologyTags } from "@/sections/projects/components/TechnologyTags";
-import type { ProjectCaseStudy } from "@/project-engine/types";
+import type { ProjectCaseStudy } from "@/content/projects/types";
 import { cn } from "@/lib/cn";
 
 interface ProjectCardProps {

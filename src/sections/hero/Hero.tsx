@@ -5,8 +5,12 @@ import { Container } from "@/components/layout/Container";
 import { Kbd } from "@/components/ui/Kbd";
 import { heroContent } from "@/content/hero";
 import { getModifierKey } from "@/command-palette/lib/platform";
+import { useLocation } from "@/lib/router";
 
 export function Hero(): ReactElement {
+  const location = useLocation();
+  const path = location.path;
+
   const shortcutKeys = useMemo(
     () => [getModifierKey(), heroContent.shortcutKey],
     [],
@@ -33,16 +37,30 @@ export function Hero(): ReactElement {
 
             <nav aria-label={heroContent.navLabel}>
               <ol className="flex flex-wrap gap-x-5 gap-y-2 lg:justify-center">
-                {heroContent.navigation.map((item) => (
-                  <li key={item.href}>
-                    <a
-                      href={item.href}
-                      className="no-underline transition-colors duration-200 ease-dossier hover:text-ink"
-                    >
-                      {item.label}
-                    </a>
-                  </li>
-                ))}
+                {heroContent.navigation.map((item) => {
+                  const isActive =
+                    (item.href === "/projects" && path.startsWith("/projects")) ||
+                    (item.href === "/notes" && path.startsWith("/notes")) ||
+                    (item.href === "/journey" && path.startsWith("/journey")) ||
+                    (item.href === "#work" && path === "/") ||
+                    (item.href === "#about" && path === "/" && location.hash === "#about");
+
+                  return (
+                    <li key={item.href}>
+                      <a
+                        href={item.href}
+                        aria-current={isActive ? "page" : undefined}
+                        className={`no-underline transition-colors duration-200 ease-dossier ${
+                          isActive
+                            ? "font-semibold text-ink underline underline-offset-4 decoration-accent/60"
+                            : "hover:text-ink text-muted-foreground"
+                        }`}
+                      >
+                        {item.label}
+                      </a>
+                    </li>
+                  );
+                })}
               </ol>
             </nav>
 

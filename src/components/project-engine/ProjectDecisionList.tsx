@@ -12,7 +12,7 @@ export function ProjectDecisionList({
   group,
 }: ProjectDecisionListProps): ReactElement {
   return (
-    <section aria-labelledby={`${group.id}-label`}>
+    <section id={group.id} aria-labelledby={`${group.id}-label`}>
       <SectionLabel id={`${group.id}-label`} className="text-accent">
         {group.label}
       </SectionLabel>

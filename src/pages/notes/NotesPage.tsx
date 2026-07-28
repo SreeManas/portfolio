@@ -9,6 +9,7 @@ import type { EngineeringNote, NoteCategory } from "@/notes/types";
 import { NoteCard } from "@/sections/notes/components/NoteCard";
 import { NotesCategoryFilter } from "@/sections/notes/components/NotesCategoryFilter";
 import { NotesSearch } from "@/sections/notes/components/NotesSearch";
+import { BackLink } from "@/components/ui/BackLink";
 
 function matchesQuery(note: EngineeringNote, query: string): boolean {
   if (!query) {
@@ -71,12 +72,7 @@ export function NotesPage(): ReactElement {
       <section className="border-b border-border py-[var(--section-space)]">
         <Container size="wide">
           <header className="max-w-[var(--measure-copy)]">
-            <a
-              href="/"
-              className="font-mono text-xs uppercase leading-6 text-muted-foreground underline-offset-4 hover:text-ink hover:underline focus-visible:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
-            >
-              Back to Home
-            </a>
+            <BackLink href="/">Back to Home</BackLink>
             <SectionLabel className="mt-10">Knowledge Hub</SectionLabel>
             <h1
               id="notes-page-title"

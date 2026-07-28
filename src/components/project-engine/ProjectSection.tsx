@@ -16,7 +16,7 @@ export function ProjectSection({
   const isCompact = density === "compact";
 
   return (
-    <section aria-labelledby={`${block.id}-title`}>
+    <section id={block.id} aria-labelledby={`${block.id}-title`}>
       <SectionLabel className="text-accent">{block.label}</SectionLabel>
       <h3
         id={`${block.id}-title`}

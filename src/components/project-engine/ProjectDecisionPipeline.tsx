@@ -11,7 +11,7 @@ export function ProjectDecisionPipeline({
   pipeline,
 }: ProjectDecisionPipelineProps): ReactElement {
   return (
-    <section aria-labelledby={`${pipeline.id}-label`}>
+    <section id={pipeline.id} aria-labelledby={`${pipeline.id}-label`}>
       <SectionLabel id={`${pipeline.id}-label`} className="text-accent">
         {pipeline.label}
       </SectionLabel>

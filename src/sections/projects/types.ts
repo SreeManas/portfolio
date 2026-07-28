@@ -1,4 +1,4 @@
-import type { ProjectCaseStudy } from "@/project-engine/types";
+import type { ProjectCaseStudy } from "@/content/projects/types";
 
 export interface ProjectsContent {
   id: string;

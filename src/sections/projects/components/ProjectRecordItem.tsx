@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 
-import type { ProjectCaseStudy } from "@/project-engine/types";
+import type { ProjectCaseStudy } from "@/content/projects/types";
 
 interface ProjectRecordItemProps {
   project: ProjectCaseStudy;
@@ -30,7 +30,7 @@ export function ProjectRecordItem({
 
         <div>
           <p className="max-w-[var(--measure-copy)] text-base leading-7 text-muted-foreground">
-            {project.overview.body}
+            {project.tagline}
           </p>
           <dl className="mt-5 grid gap-4 text-sm leading-6 sm:grid-cols-3">
             <div>

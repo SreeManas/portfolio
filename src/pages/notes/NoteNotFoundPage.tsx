@@ -2,6 +2,7 @@ import type { ReactElement } from "react";
 
 import { Container } from "@/components/layout/Container";
 import { SectionLabel } from "@/components/editorial/SectionLabel";
+import { BackLink } from "@/components/ui/BackLink";
 
 export function NoteNotFoundPage(): ReactElement {
   return (
@@ -12,12 +13,7 @@ export function NoteNotFoundPage(): ReactElement {
     >
       <section className="py-[var(--section-space)]">
         <Container size="narrow">
-          <a
-            href="/notes"
-            className="font-mono text-xs uppercase leading-6 text-muted-foreground underline-offset-4 hover:text-ink hover:underline focus-visible:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
-          >
-            Back to Notes
-          </a>
+          <BackLink href="/notes">Back to Notes</BackLink>
           <SectionLabel className="mt-10">Not Found</SectionLabel>
           <h1
             id="note-not-found-title"

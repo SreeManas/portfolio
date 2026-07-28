@@ -5,6 +5,7 @@ import { SectionLabel } from "@/components/editorial/SectionLabel";
 import { Container } from "@/components/layout/Container";
 import { NoteTags } from "@/sections/notes/components/NoteTags";
 import type { EngineeringNote } from "@/notes/types";
+import { BackLink } from "@/components/ui/BackLink";
 
 interface NoteDetailPageProps {
   note: EngineeringNote;
@@ -20,12 +21,7 @@ export function NoteDetailPage({ note }: NoteDetailPageProps): ReactElement {
       <article>
         <header className="border-b border-border py-[var(--section-space)]">
           <Container size="narrow">
-            <a
-              href="/notes"
-              className="font-mono text-xs uppercase leading-6 text-muted-foreground underline-offset-4 hover:text-ink hover:underline focus-visible:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
-            >
-              Back to Notes
-            </a>
+            <BackLink href="/notes">Back to Notes</BackLink>
 
             <SectionLabel className="mt-10">{note.category}</SectionLabel>
             <h1
@@ -70,12 +66,9 @@ export function NoteDetailPage({ note }: NoteDetailPageProps): ReactElement {
               </p>
             </div>
             <EditorialDivider className="mt-12" />
-            <a
-              href="/notes"
-              className="mt-8 inline-block font-mono text-xs uppercase leading-6 text-muted-foreground underline-offset-4 transition-colors duration-200 ease-dossier hover:text-ink hover:underline focus-visible:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
-            >
-              ← Back to Notes
-            </a>
+            <div className="mt-8">
+              <BackLink href="/notes">Back to Notes</BackLink>
+            </div>
           </Container>
         </div>
       </article>

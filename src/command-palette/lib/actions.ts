@@ -1,4 +1,5 @@
 import type { CommandAction } from "@/command-palette/types";
+import { navigateTo } from "@/lib/router";
 
 interface ExecuteCommandActionOptions {
   onSuccess: (message: string) => void;
@@ -74,8 +75,28 @@ export async function executeCommandAction(
     return true;
   }
 
+  if (action.type === "scroll-top") {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return true;
+  }
+
+  if (action.type === "scroll-bottom") {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    return true;
+  }
+
+  if (action.type === "go-back") {
+    window.history.back();
+    return true;
+  }
+
+  if (action.type === "go-forward") {
+    window.history.forward();
+    return true;
+  }
+
   if (action.type === "navigate") {
-    window.location.assign(action.href);
+    navigateTo(action.href);
     return true;
   }
 

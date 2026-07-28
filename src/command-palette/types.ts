@@ -14,6 +14,18 @@ export type CommandAction =
       targetId: string;
     }
   | {
+      type: "scroll-top";
+    }
+  | {
+      type: "scroll-bottom";
+    }
+  | {
+      type: "go-back";
+    }
+  | {
+      type: "go-forward";
+    }
+  | {
       type: "navigate";
       href: string;
     }

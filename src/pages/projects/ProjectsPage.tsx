@@ -4,6 +4,7 @@ import { Container } from "@/components/layout/Container";
 import { ProjectCard } from "@/sections/projects/components/ProjectCard";
 import { SectionLabel } from "@/components/editorial/SectionLabel";
 import { projectsContent } from "@/content/projects";
+import { BackLink } from "@/components/ui/BackLink";
 
 export function ProjectsPage(): ReactElement {
   const featuredProject = projectsContent.projects.find((project) => project.featured);
@@ -21,12 +22,7 @@ export function ProjectsPage(): ReactElement {
         <Container size="wide">
           <div className="grid gap-12 lg:grid-cols-[minmax(0,0.34fr)_minmax(0,0.66fr)] lg:gap-24">
             <header>
-              <a
-                href="/"
-                className="font-mono text-xs uppercase leading-6 text-muted-foreground underline-offset-4 hover:text-ink hover:underline focus-visible:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
-              >
-                Back to Home
-              </a>
+              <BackLink href="/">Back to Home</BackLink>
               <SectionLabel className="mt-10">Projects</SectionLabel>
               <h1
                 id="projects-page-title"
