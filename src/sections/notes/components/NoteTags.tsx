@@ -10,7 +10,7 @@ export function NoteTags({ tags }: NoteTagsProps): ReactElement {
       {tags.map((tag) => (
         <li
           key={tag}
-          className="rounded-control border border-border px-2.5 py-1 font-mono text-[0.6875rem] uppercase leading-5 text-muted-foreground"
+          className="font-mono text-[0.625rem] font-semibold uppercase tracking-wider text-muted-foreground border border-border/60 px-2 py-0.5 rounded-none bg-canvas"
         >
           {tag}
         </li>

@@ -5,7 +5,7 @@ import { engineeringPrinciplesContent } from "@/content/engineeringPrinciples";
 import { journalContent } from "@/content/journal";
 import { journeyContent } from "@/content/journey";
 import { journeyExperienceContent } from "@/content/journeyExperience";
-import { getNotePath, notesContent } from "@/content/notes";
+import { platformArticles, platformConfig } from "@/content/notes";
 import { projectsContent } from "@/content/projects";
 import { skillsContent } from "@/content/skills";
 import type {
@@ -224,11 +224,11 @@ const navigationCommands: readonly CommandDefinition[] = [
     category: "navigation",
     action: { type: "navigate", href: "/notes" },
     keywords: [
-      notesContent.title,
-      notesContent.introduction,
+      platformConfig.title,
+      platformConfig.introduction,
       journalContent.title,
       journalContent.introduction,
-      ...notesContent.notes.flatMap((note) => [
+      ...platformArticles.flatMap((note) => [
         note.title,
         note.summary,
         note.category,
@@ -342,13 +342,13 @@ const skillCommands: readonly CommandDefinition[] = skillsContent.groups.flatMap
     })),
 );
 
-const noteCommands: readonly CommandDefinition[] = notesContent.notes.map(
+const noteCommands: readonly CommandDefinition[] = platformArticles.map(
   (note) => ({
     id: `note-${note.id}`,
     title: note.title,
     description: note.summary,
     category: "note",
-    action: { type: "navigate", href: getNotePath(note.slug) },
+    action: { type: "navigate", href: `/notes/${note.slug}` },
     keywords: [
       note.title,
       note.summary,

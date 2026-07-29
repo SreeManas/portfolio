@@ -6,7 +6,7 @@ import { CommandPalette } from "@/command-palette/CommandPalette";
 import { Footer } from "@/components/layout/Footer";
 import { LoadingProgress } from "@/components/ui/LoadingProgress";
 import { footerContent } from "@/content/footer";
-import { getNoteBySlug } from "@/content/notes";
+import { getArticleBySlug } from "@/content/notes";
 import { useLocation, useLinkInterception } from "@/lib/router";
 import { RootLayout } from "@/app/RootLayout";
 import { HomePage } from "@/pages/HomePage";
@@ -36,7 +36,7 @@ function resolvePage(path: string): ReactElement {
 
   if (path.startsWith("/notes/")) {
     const slug = path.slice("/notes/".length);
-    const note = getNoteBySlug(slug);
+    const note = getArticleBySlug(slug);
 
     if (!note) {
       return <NoteNotFoundPage />;

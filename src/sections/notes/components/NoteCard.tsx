@@ -1,12 +1,11 @@
 import type { ReactElement } from "react";
-
-import { getNotePath } from "@/content/notes";
 import { cn } from "@/lib/cn";
-import type { EngineeringNote } from "@/notes/types";
+
+import type { EngineeringArticle } from "@/notes/types";
 import { NoteTags } from "@/sections/notes/components/NoteTags";
 
 interface NoteCardProps {
-  note: EngineeringNote;
+  note: EngineeringArticle;
   featured?: boolean;
 }
 
@@ -16,7 +15,7 @@ export function NoteCard({
 }: NoteCardProps): ReactElement {
   return (
     <a
-      href={getNotePath(note.slug)}
+      href={`/notes/${note.slug}`}
       className={cn(
         "group block h-full border border-border bg-paper p-6 transition-all duration-200 ease-dossier hover:-translate-y-1 hover:shadow-soft focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent md:p-8",
         featured && "md:p-10",
