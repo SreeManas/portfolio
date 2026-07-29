@@ -12,12 +12,27 @@ import { ReadingProgress } from "@/sections/platform/components/ReadingProgress"
 import { TableOfContents } from "@/sections/platform/components/TableOfContents";
 import { ArticleNavigation } from "@/sections/platform/components/ArticleNavigation";
 
+import { getEntity, type EntityUrn } from "@/lib/knowledge";
+import { getRelatedKnowledge, getContinueLearning } from "@/lib/discovery";
+import { KnowledgeSection } from "@/components/knowledge/KnowledgeSection";
+import { EmptyState } from "@/components/knowledge/EmptyState";
+import { KnowledgeBreadcrumbs } from "@/components/navigation/KnowledgeBreadcrumbs";
+import { ReadingCompanionSidebar, SidebarWidget } from "@/components/navigation/ReadingCompanionSidebar";
+
 interface NoteDetailPageProps {
   note: EngineeringArticle;
 }
 
 export function NoteDetailPage({ note }: NoteDetailPageProps): ReactElement {
-  // Find next/prev articles
+  // Generate URN to query Knowledge Engine
+  const urn: EntityUrn = `urn:article:${note.slug}`;
+  
+  // Knowledge Engine Queries
+  const entity = getEntity(urn);
+  const relatedKnowledge = getRelatedKnowledge(urn, 6);
+  const continueLearning = getContinueLearning(urn, 4);
+
+  // Find next/prev articles for legacy navigation
   const allArticles = getAllPublishedArticles();
   const currentIndex = allArticles.findIndex(a => a.id === note.id);
   const previousArticle = currentIndex < allArticles.length - 1 ? allArticles[currentIndex + 1] : undefined;
@@ -35,7 +50,11 @@ export function NoteDetailPage({ note }: NoteDetailPageProps): ReactElement {
         <header className="border-b border-border py-[var(--section-space)] bg-paper">
           <Container size="narrow">
             <nav aria-label="Breadcrumb">
-              <BackLink href="/notes">Back to Platform</BackLink>
+              {entity ? (
+                <KnowledgeBreadcrumbs entity={entity} baseHref="/notes" baseLabel="Engineering Notes" />
+              ) : (
+                <BackLink href="/notes">Back to Platform</BackLink>
+              )}
             </nav>
 
             <div className="mt-10 flex flex-wrap items-center gap-3">
@@ -111,11 +130,9 @@ export function NoteDetailPage({ note }: NoteDetailPageProps): ReactElement {
         </header>
 
         <div className="py-[var(--section-space)] relative">
-          <Container size="wide" className="flex justify-center">
+          <Container size="wide" className="flex justify-center xl:justify-between gap-12">
             
-            <TableOfContents />
-            
-            <div className="max-w-[var(--measure-copy)] w-full mx-auto xl:mx-16">
+            <div className="max-w-[var(--measure-copy)] w-full mx-auto xl:mx-0">
               <EditorialDivider className="mb-10" />
               
               <div id="article-body" className="min-h-[50vh]">
@@ -124,18 +141,66 @@ export function NoteDetailPage({ note }: NoteDetailPageProps): ReactElement {
               
               <EditorialDivider className="mt-16" />
               
-              {/* Related Reading Placeholder for FP9C */}
-              <aside className="mt-16 bg-paper border border-border rounded-panel p-6 shadow-sm opacity-50 border-dashed" aria-label="Related Reading">
-                <h3 className="font-display text-2xl font-semibold text-ink">Related Reading Placeholder</h3>
-                <p className="mt-2 text-muted-foreground text-sm">Feature Pack 9C will inject related articles, knowledge graphs, and cross-linking here.</p>
-              </aside>
+              <KnowledgeSection 
+                title="Continue Learning"
+                items={continueLearning}
+                emptyState={
+                  <EmptyState 
+                    title="You're caught up."
+                    message="No direct continuation was found for this article."
+                    actionHref="/notes"
+                    actionLabel="Explore All Notes →"
+                  />
+                }
+              />
 
-              <ArticleNavigation previousArticle={previousArticle} nextArticle={nextArticle} />
+              <KnowledgeSection 
+                title="Related Knowledge"
+                items={relatedKnowledge}
+                emptyState={
+                  <EmptyState 
+                    title="No related knowledge found."
+                    message="As more notes and projects are added to the platform, related content will appear here automatically."
+                  />
+                }
+              />
+
+              <div className="mt-16">
+                <ArticleNavigation previousArticle={previousArticle} nextArticle={nextArticle} />
+              </div>
 
               <div className="mt-12">
                 <BackLink href="/notes">Back to Platform</BackLink>
               </div>
             </div>
+
+            <ReadingCompanionSidebar>
+              <TableOfContents />
+              
+              {relatedKnowledge.length > 0 && (
+                <>
+                  <SidebarWidget title="Related">
+                    <ul className="space-y-4">
+                      {relatedKnowledge.slice(0, 3).map(match => (
+                        <li key={match.entity.urn}>
+                          <a 
+                            href={match.entity.url} 
+                            className="group block"
+                          >
+                            <span className="font-mono text-[0.625rem] font-semibold uppercase tracking-wider text-muted-foreground mb-1 block group-hover:text-accent transition-colors">
+                              {match.entity.type}
+                            </span>
+                            <span className="text-sm font-medium text-ink group-hover:text-accent transition-colors leading-snug line-clamp-2">
+                              {match.entity.title}
+                            </span>
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </SidebarWidget>
+                </>
+              )}
+            </ReadingCompanionSidebar>
           </Container>
         </div>
       </article>

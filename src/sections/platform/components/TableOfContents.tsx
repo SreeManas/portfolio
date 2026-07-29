@@ -72,7 +72,7 @@ export function TableOfContents(): ReactElement | null {
   if (items.length === 0) return null;
 
   return (
-    <nav aria-label="Table of Contents" className="sticky top-32 max-h-[calc(100vh-10rem)] overflow-y-auto pr-4 hidden xl:block w-64 overscroll-contain pb-10">
+    <nav aria-label="Table of Contents" className="pr-4 pb-10">
       <h4 className="font-mono text-xs font-semibold uppercase tracking-wider text-ink/80 mb-6">
         On this page
       </h4>

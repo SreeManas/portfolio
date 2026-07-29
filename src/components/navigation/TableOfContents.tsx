@@ -10,9 +10,10 @@ export interface TocItem {
 interface TableOfContentsProps {
   items: readonly TocItem[];
   title?: string;
+  className?: string;
 }
 
-export function TableOfContents({ items, title = "Case Study" }: TableOfContentsProps): ReactElement {
+export function TableOfContents({ items, title = "Case Study", className }: TableOfContentsProps): ReactElement {
   const [activeId, setActiveId] = useState<string>(items[0]?.id ?? "");
 
   useEffect(() => {
@@ -56,7 +57,7 @@ export function TableOfContents({ items, title = "Case Study" }: TableOfContents
   return (
     <nav
       aria-label={`${title} sections`}
-      className="hidden lg:block lg:sticky lg:top-10 lg:h-fit"
+      className={className || "hidden lg:block lg:sticky lg:top-10 lg:h-fit"}
     >
       <SectionLabel>{title}</SectionLabel>
       <ol className="mt-5 space-y-3 font-mono text-xs uppercase leading-6 text-muted-foreground">

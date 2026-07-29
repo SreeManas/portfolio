@@ -16,6 +16,12 @@ import { RoadmapSection } from "./sections/RoadmapSection";
 import { SolutionSection } from "./sections/SolutionSection";
 import { TechStackSection } from "./sections/TechStackSection";
 
+import { getProjectConnections } from "@/lib/discovery";
+import type { EntityUrn } from "@/lib/knowledge";
+import { KnowledgeSection } from "@/components/knowledge/KnowledgeSection";
+import { EmptyState } from "@/components/knowledge/EmptyState";
+import { ReadingCompanionSidebar, SidebarWidget } from "@/components/navigation/ReadingCompanionSidebar";
+
 interface CaseStudyLayoutProps {
   project: ProjectCaseStudy;
 }
@@ -68,6 +74,9 @@ export function CaseStudyLayout({ project }: CaseStudyLayoutProps): ReactElement
     tocItems.push({ id: project.resources.id, label: project.resources.label });
   }
 
+  const urn: EntityUrn = `urn:project:${project.id}`;
+  const connections = getProjectConnections(urn, 6);
+
   return (
     <main
       id="main-content"
@@ -105,11 +114,48 @@ export function CaseStudyLayout({ project }: CaseStudyLayoutProps): ReactElement
               {project.roadmap ? <RoadmapSection data={project.roadmap} /> : null}
 
               {project.resources ? <ResourcesSection data={project.resources} /> : null}
+              
+              <div className="pt-10 border-t border-border">
+                <KnowledgeSection 
+                  title="Project Connections"
+                  items={connections}
+                  emptyState={
+                    <EmptyState 
+                      title="No connections discovered yet."
+                      message="Related engineering notes and journey entries will appear here."
+                    />
+                  }
+                />
+              </div>
             </article>
 
-            {tocItems.length > 0 ? (
-              <TableOfContents title="Case Study" items={tocItems} />
-            ) : null}
+            <ReadingCompanionSidebar>
+              {tocItems.length > 0 ? (
+                <TableOfContents title="Case Study" items={tocItems} className="mb-10" />
+              ) : null}
+              
+              {connections.length > 0 && (
+                <SidebarWidget title="Related Notes">
+                  <ul className="space-y-4">
+                    {connections.slice(0, 3).map(match => (
+                      <li key={match.entity.urn}>
+                        <a 
+                          href={match.entity.url} 
+                          className="group block"
+                        >
+                          <span className="font-mono text-[0.625rem] font-semibold uppercase tracking-wider text-muted-foreground mb-1 block group-hover:text-accent transition-colors">
+                            {match.entity.type}
+                          </span>
+                          <span className="text-sm font-medium text-ink group-hover:text-accent transition-colors leading-snug line-clamp-2">
+                            {match.entity.title}
+                          </span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </SidebarWidget>
+              )}
+            </ReadingCompanionSidebar>
           </div>
         </Container>
       </section>

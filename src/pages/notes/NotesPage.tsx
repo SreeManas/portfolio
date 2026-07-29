@@ -3,6 +3,7 @@ import { Container } from "@/components/layout/Container";
 import { SectionLabel } from "@/components/editorial/SectionLabel";
 import { Reveal } from "@/components/motion/Reveal";
 import { platformConfig, getAllPublishedArticles } from "@/content/notes";
+import { getAllTechnologies } from "@/content/technologies";
 import { motionTiming } from "@/lib/motion";
 import type { EngineeringArticle, NoteCategory, ArticleDifficulty } from "@/notes/types";
 import { BackLink } from "@/components/ui/BackLink";
@@ -79,8 +80,7 @@ export function NotesPage(): ReactElement {
     return Array.from(tags).sort();
   }, [publishedArticles]);
 
-  // Unique technologies for the explorer
-  const technologies = ["React", "TypeScript", "Architecture", "Backend", "Frontend", "Performance"];
+  const technologies = useMemo(() => getAllTechnologies(), []);
 
   const handleClearFilters = () => {
     setQuery("");
@@ -89,11 +89,6 @@ export function NotesPage(): ReactElement {
     setActiveDifficulty("All");
   };
 
-  const handleTechnologySelect = (tech: string) => {
-    setQuery(tech);
-    document.getElementById("platform-search")?.focus();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
 
   return (
     <main
@@ -295,7 +290,7 @@ export function NotesPage(): ReactElement {
                 className="mb-10"
               />
               <h2 id="technology-title" className="sr-only">Browse by Technology</h2>
-              <TechnologyExplorer technologies={technologies} onSelect={handleTechnologySelect} />
+              <TechnologyExplorer technologies={technologies} />
             </Container>
           </section>
 

@@ -8,6 +8,7 @@ import { LoadingProgress } from "@/components/ui/LoadingProgress";
 import { footerContent } from "@/content/footer";
 import { getArticleBySlug } from "@/content/notes";
 import { useLocation, useLinkInterception } from "@/lib/router";
+import { initializeKnowledgeRegistry } from "@/lib/knowledge";
 import { RootLayout } from "@/app/RootLayout";
 import { HomePage } from "@/pages/HomePage";
 import { JourneyPage } from "@/pages/journey/JourneyPage";
@@ -16,6 +17,7 @@ import { NoteNotFoundPage } from "@/pages/notes/NoteNotFoundPage";
 import { NotesPage } from "@/pages/notes/NotesPage";
 import { MedrouterProjectPage } from "@/pages/projects/MedrouterProjectPage";
 import { ProjectsPage } from "@/pages/projects/ProjectsPage";
+import { TechnologyHubPage } from "@/pages/technology/TechnologyHubPage";
 
 function resolvePage(path: string): ReactElement {
   if (path === "/projects") {
@@ -45,10 +47,17 @@ function resolvePage(path: string): ReactElement {
     return <NoteDetailPage note={note} />;
   }
 
+  if (path.startsWith("/technology/")) {
+    const slug = path.slice("/technology/".length);
+    return <TechnologyHubPage slug={slug} />;
+  }
+
   return <HomePage />;
 }
 
 export function App(): ReactElement {
+  initializeKnowledgeRegistry();
+
   const { path } = useLocation();
   useLinkInterception();
 
